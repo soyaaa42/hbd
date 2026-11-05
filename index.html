@@ -1,762 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>For You</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For You</title>
+<style>
+:root{
+  --ink:#fdf1f3; --letter-ink:#3a2a55; --gold:linear-gradient(90deg,#a87a32,#f5e2a8 50%,#a87a32);
+  --pop:cubic-bezier(.34,1.56,.64,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{overflow:hidden;font-family:Georgia,"Times New Roman",serif;color:var(--ink);
+  background:radial-gradient(ellipse at 50% 105%,rgba(255,170,140,.55),transparent 55%),
+  linear-gradient(to bottom,#1f1538 0%,#3b2557 38%,#7a4a7e 68%,#d58a8f 100%)}
+#sky,#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#sky{z-index:1}#fx{z-index:200}
+.scene{position:relative;z-index:5;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:env(safe-area-inset-top,0px)}
 
-  <style>
-    /* =========================================================
-       1. BASE
-       ========================================================= */
-    :root {
-      --ink: #fdf1f3;
-      --letter-ink: #3a2a55;
-      --gold: linear-gradient(90deg, #b98a3e, #f1d795 50%, #b98a3e);
-      --pop: cubic-bezier(.34, 1.56, .64, 1);
-    }
+/* TEXT */
+.title{position:absolute;top:calc(34px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;pointer-events:none;text-shadow:0 2px 12px rgba(20,10,40,.5);animation:fadeUp .9s ease .2s backwards}
+.title p:first-child{font-size:14px;letter-spacing:.5px;opacity:.85;margin-bottom:6px}
+.title p:last-child{font-size:30px;font-style:italic;background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 2px 8px rgba(20,10,40,.5))}
+.instruction{margin-top:30px;text-align:center;font-size:17px;letter-spacing:1.5px;pointer-events:none;text-shadow:0 2px 10px rgba(20,10,40,.5);animation:fadeUp .9s ease 2.9s backwards}
+.instruction span{display:block;font-size:24px;margin-top:4px;animation:bounce 1.6s ease-in-out infinite}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; }
+/* CAKE */
+.cake{position:relative;width:340px;height:360px;margin-top:30px;filter:drop-shadow(0 14px 20px rgba(10,5,30,.4))}
+.cake::before{content:"";position:absolute;left:50%;bottom:-26px;width:460px;height:56px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(255,200,160,.4),transparent);z-index:-1;animation:breathe 5s ease-in-out 2s infinite}
+.stand-plate{position:absolute;left:-14px;right:-14px;bottom:38px;height:14px;border-radius:50%;background:linear-gradient(#fff,#e6dcef);box-shadow:0 3px 6px rgba(40,20,70,.2);animation:fadeIn .6s ease .1s backwards}
+.stand-stem{position:absolute;left:50%;bottom:8px;width:14px;height:32px;transform:translateX(-50%);background:linear-gradient(90deg,#e6dcef,#fff,#e6dcef);animation:fadeIn .6s ease 0s backwards}
+.stand-foot{position:absolute;left:50%;bottom:0;width:96px;height:9px;transform:translateX(-50%);border-radius:50%;background:linear-gradient(#fff,#ddd2ea);animation:fadeIn .6s ease 0s backwards}
 
-    body {
-      overflow: hidden;
-      font-family: Georgia, "Times New Roman", serif;
-      color: var(--ink);
-      /* dusk sky: deep plum at the top, rose glow at the horizon */
-      background:
-        radial-gradient(ellipse at 50% 105%, rgba(255, 170, 140, .55), transparent 55%),
-        linear-gradient(to bottom, #1f1538 0%, #3b2557 38%, #7a4a7e 68%, #d58a8f 100%);
-    }
+.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:8px 8px 3px 3px;overflow:hidden;
+  background:linear-gradient(90deg,#f1e8da 0%,#fffaf3 30%,#fffdf8 60%,#efe5d4 100%)}
+.tier--base{bottom:48px;width:280px;height:94px;animation:rise .9s cubic-bezier(.22,1,.36,1) .4s backwards}
+.tier--top{bottom:142px;width:188px;height:108px;animation:rise .9s cubic-bezier(.22,1,.36,1) .9s backwards}
+/* single lilac icing band */
+.tier::before{content:"";position:absolute;inset:0 0 auto 0;height:26px;background:linear-gradient(#e9dcf6,#f3ecfa)}
+/* one fine gold line */
+.tier::after{content:"";position:absolute;left:0;right:0;bottom:16px;height:2px;background:var(--gold)}
+.bloom{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#f5d36b 2.5px,#fff 3px,#fff 4px,#cdb8f0 5px,#b79be6 7px)}
+.top-rim{position:absolute;left:50%;bottom:243px;width:188px;height:14px;transform:translateX(-50%);border-radius:50%;background:#fffdf8;box-shadow:inset 0 -2px 4px rgba(150,110,80,.15);z-index:1;animation:fadeIn .5s ease 1.4s backwards}
 
-    #sky {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-    }
+/* CANDLES */
+.candle{position:absolute;left:var(--x);--lit:calc(2.1s + var(--i)*.12s);bottom:250px;width:22px;height:110px;border:0;background:none;cursor:pointer;z-index:4;-webkit-tap-highlight-color:transparent;animation:candleDrop .7s cubic-bezier(.22,1,.36,1) calc(1.7s + var(--i)*.1s) backwards}
+.candle:focus-visible{outline:3px solid #fff;outline-offset:4px;border-radius:8px}
+.wax{position:absolute;left:8px;bottom:0;width:6px;height:var(--h);border-radius:3px 3px 1px 1px;background:linear-gradient(90deg,#f1d795,#fffaf0 45%,#e9c97a);box-shadow:inset -2px 0 3px rgba(120,80,20,.25);transition:transform .3s var(--pop)}
+.candle:hover .wax{transform:translateY(-3px)}
+.wick{position:absolute;left:10px;bottom:var(--h);width:2px;height:6px;background:#3a2a55}
+.flame{position:absolute;left:6px;bottom:calc(var(--h) + 5px);width:10px;height:22px;border-radius:50% 50% 50% 50%/65% 65% 35% 35%;
+  background:radial-gradient(ellipse at 50% 78%,#9fcdf7 10%,#ffe6a8 42%,#ffb347 85%);box-shadow:0 0 14px 6px rgba(255,200,120,.5);transform-origin:50% 100%;
+  animation:flicker .9s ease-in-out var(--lit) infinite alternate,ignite .45s var(--pop) var(--lit) backwards;transition:opacity .35s,transform .35s}
+.ready .flame{animation:flicker .9s ease-in-out infinite alternate,ignite .45s var(--pop) backwards}
+.candle.out .flame{animation:none;opacity:0;transform:scale(.2)}
+.smoke{position:absolute;left:8px;bottom:calc(var(--h) + 12px);width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.8);opacity:0;pointer-events:none}
+.candle.out .smoke{animation:smoke 1.2s var(--pop)}
 
-    .scene {
-      position: relative;
-      z-index: 5;
-      width: 100vw;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding-top: env(safe-area-inset-top, 0px);
-    }
+/* MUSIC */
+.music-btn{position:absolute;top:calc(20px + env(safe-area-inset-top,0px));right:20px;z-index:70;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;font-size:20px;cursor:pointer}
+.music-btn:hover{background:rgba(255,255,255,.3)}
+.music-btn.muted{opacity:.5;text-decoration:line-through}
 
-    /* =========================================================
-       2. TEXT
-       ========================================================= */
-    .title {
-      position: absolute;
-      top: calc(34px + env(safe-area-inset-top, 0px));
-      left: 0;
-      right: 0;
-      text-align: center;
-      pointer-events: none;
-      text-shadow: 0 2px 12px rgba(20, 10, 40, .5);
-    }
-    .title p:first-child { font-size: 14px; letter-spacing: .5px; opacity: .85; margin-bottom: 6px; }
-    .title p:last-child  { font-size: 28px; font-style: italic; }
+/* MODAL */
+.letter-modal{position:fixed;inset:0;z-index:100;display:flex;justify-content:center;align-items:center;background:rgba(20,12,45,.65);opacity:0;pointer-events:none;transition:opacity .4s}
+.letter-modal.show{opacity:1;pointer-events:auto}
 
-    .instruction {
-      margin-top: 30px;
-      text-align: center;
-      font-size: 17px;
-      letter-spacing: 1.5px;
-      pointer-events: none;
-      text-shadow: 0 2px 10px rgba(20, 10, 40, .5);
-    }
-    .instruction span {
-      display: block;
-      font-size: 24px;
-      margin-top: 4px;
-      animation: bounce 1.6s ease-in-out infinite;
-    }
+/* bouquet stage */
+.env{position:absolute;width:min(84vw,340px,calc(60vh*.8));aspect-ratio:4/5;cursor:pointer;border:0;background:none;transition:transform .8s var(--pop),opacity .5s;transform:translateY(120px) scale(.7);opacity:0;-webkit-tap-highlight-color:transparent}
+.env:focus-visible{outline:3px solid #fff;outline-offset:6px;border-radius:12px}
+.env svg{display:block;width:100%;height:100%;overflow:visible;transform-origin:50% 92%;filter:drop-shadow(0 18px 24px rgba(10,5,30,.45));transition:transform .8s ease,opacity .6s ease .15s}
+.letter-modal.show .env{transform:none;opacity:1}
+.letter-modal.show .env:not(.open) svg{animation:sway 4.5s ease-in-out .9s infinite}
+.env.open{pointer-events:none}
+.env.open svg{animation:none;transform:scale(1.35) translateY(-30px);opacity:0}
+.env.open .env-hint{opacity:0}
+.env-hint{position:absolute;bottom:-38px;left:0;right:0;text-align:center;font-style:italic;letter-spacing:1px;font-size:15px;color:#fdf1f3;text-shadow:0 2px 8px rgba(20,10,40,.6);transition:opacity .3s;animation:beat 1.8s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+/* letter */
+.letter{position:relative;width:min(88vw,500px);padding:10px;border-radius:3px;background:#e4daf2;box-shadow:0 25px 60px rgba(30,20,70,.5);transform:translateY(120px) scale(.4);opacity:0;pointer-events:none;transition:transform .8s var(--pop),opacity .4s}
+.letter-modal.opened .letter{transform:none;opacity:1;pointer-events:auto}
+.letter-inner{height:min(66vh,520px);overflow-y:auto;display:flex;flex-direction:column;padding:clamp(28px,5vw,50px);border:1px solid rgba(90,60,140,.22);color:var(--letter-ink);
+  background:linear-gradient(rgba(253,250,255,.95),rgba(248,243,255,.95)),repeating-linear-gradient(0deg,transparent 0 31px,rgba(110,80,160,.07) 32px)}
+.letter-inner p{font-size:clamp(15px,2.2vw,18px);line-height:1.8;margin-bottom:14px;min-height:1.8em}
+.letter-page{display:none;text-align:center;margin:auto 0}
+.letter-page.active{display:block;animation:pageIn .5s ease}
+.letter-page h2{font-size:clamp(22px,4vw,30px);font-weight:normal;font-style:italic;margin-bottom:14px}
+.letter-page .sign{font-style:italic;text-align:right;margin-bottom:0}
+.typing::after{content:"|";margin-left:1px;opacity:.6;animation:blink .7s steps(1) infinite}
+.letter-nav{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 2px;color:var(--letter-ink);font-size:14px;letter-spacing:1px}
+.letter-nav span{opacity:.6}
+.letter-nav button{background:none;border:0;color:var(--letter-ink);font-family:inherit;font-size:15px;cursor:pointer;padding:4px 6px}
+.letter-nav button:disabled{opacity:.25;cursor:default}
+.letter-close{position:absolute;top:18px;right:22px;z-index:2;background:none;border:0;font-size:22px;line-height:1;color:var(--letter-ink);opacity:.6;cursor:pointer}
+.letter-close:hover{opacity:1}
 
-    /* =========================================================
-       3. CAKE
-       ========================================================= */
-    .cake {
-      position: relative;
-      width: 340px;
-      height: 360px;
-      margin-top: 30px;
-      filter: drop-shadow(0 16px 22px rgba(10, 5, 30, .45));
-    }
-
-    /* warm glow under the stand */
-    .cake::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -26px;
-      width: 460px;
-      height: 60px;
-      transform: translateX(-50%);
-      background: radial-gradient(closest-side, rgba(255, 190, 150, .4), transparent);
-      z-index: -1;
-    }
-
-    /* cake stand */
-    .stand-plate {
-      position: absolute;
-      left: -20px;
-      right: -20px;
-      bottom: 36px;
-      height: 18px;
-      border-radius: 50%;
-      background: linear-gradient(#fff, #e6dcef);
-      box-shadow: 0 4px 8px rgba(40, 20, 70, .25);
-    }
-    .stand-stem {
-      position: absolute;
-      left: 50%;
-      bottom: 8px;
-      width: 28px;
-      height: 32px;
-      transform: translateX(-50%);
-      background: linear-gradient(90deg, #d9cfe6, #fff, #d9cfe6);
-    }
-    .stand-foot {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 110px;
-      height: 10px;
-      transform: translateX(-50%);
-      border-radius: 50%;
-      background: linear-gradient(#fff, #d9cfe6);
-    }
-
-    /* tiers */
-    .tier {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 8px 8px 4px 4px;
-      background: linear-gradient(90deg, #eadcc6 0%, #fbf5ea 30%, #fffaf1 55%, #ece0cb 100%);
-      box-shadow: inset 0 -10px 14px rgba(150, 110, 80, .12);
-    }
-    .tier--base { bottom: 46px;  width: 290px; height: 84px; }
-    .tier--mid  { bottom: 130px; width: 212px; height: 70px; }
-    .tier--top  { bottom: 200px; width: 142px; height: 60px; }
-
-    /* scalloped blush icing */
-    .tier::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 32px;
-      border-radius: 8px 8px 0 0;
-      background:
-        radial-gradient(circle at 10px 20px, #f0d6e4 10px, transparent 11px) 0 0 / 20px 100% repeat-x,
-        linear-gradient(#f0d6e4, #f0d6e4) 0 0 / 100% 20px no-repeat;
-    }
-
-    /* gold ribbon */
-    .tier::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 16px;
-      height: 5px;
-      background: var(--gold);
-    }
-
-    /* pearl border */
-    .pearls {
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      bottom: 4px;
-      height: 8px;
-      background: radial-gradient(circle, #fff 3px, #e7d9c0 4px, transparent 5px) 0 0 / 14px 8px repeat-x;
-    }
-
-    /* sugar flowers */
-    .bloom {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #f3d27a 3px, #f7c6d6 4px);
-      box-shadow: 0 0 0 4px #fbdce6, 0 0 0 5px rgba(180, 120, 150, .3);
-    }
-    .bloom--lilac {
-      background: radial-gradient(circle, #f3d27a 3px, #c3a8ea 4px);
-      box-shadow: 0 0 0 4px #ddd0f4, 0 0 0 5px rgba(120, 90, 180, .3);
-    }
-    .bloom::before,
-    .bloom::after {
-      content: "";
-      position: absolute;
-      top: 4px;
-      width: 12px;
-      height: 6px;
-      border-radius: 100% 0;
-      background: #7da474;
-      z-index: -1;
-    }
-    .bloom::before { left: -22px;  transform: rotate(-20deg); }
-    .bloom::after  { right: -22px; transform: scaleX(-1) rotate(-20deg); }
-
-    /* top surface the candles stand on */
-    .top-rim {
-      position: absolute;
-      left: 50%;
-      bottom: 254px;
-      width: 142px;
-      height: 14px;
-      transform: translateX(-50%);
-      border-radius: 50%;
-      background: #fff9ef;
-      box-shadow: inset 0 -2px 4px rgba(150, 110, 80, .2);
-      z-index: 1;
-    }
-
-    /* =========================================================
-       4. CANDLES (6)  -  set per candle: --x (left) and --h (height)
-       ========================================================= */
-    .candle {
-      position: absolute;
-      left: var(--x);
-      --lit: calc(2.1s + var(--i) * .12s);
-      bottom: 252px;
-      width: 22px;
-      height: 110px;
-      border: 0;
-      background: none;
-      cursor: pointer;
-      z-index: 4;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .candle:focus-visible { outline: 3px solid #fff; outline-offset: 4px; border-radius: 8px; }
-
-    .wax {
-      position: absolute;
-      left: 5px;
-      bottom: 0;
-      width: 12px;
-      height: var(--h);
-      border-radius: 4px;
-      background: repeating-linear-gradient(135deg, #fffaf0 0 6px, #e8b4c8 6px 12px);
-      box-shadow: inset -3px 0 4px rgba(90, 40, 80, .22);
-      transition: transform .3s var(--pop);
-    }
-    .candle:hover .wax { transform: translateY(-3px); }
-
-    .wick {
-      position: absolute;
-      left: 10px;
-      bottom: var(--h);
-      width: 2px;
-      height: 7px;
-      background: #3a2a55;
-    }
-
-    .flame {
-      position: absolute;
-      left: 4px;
-      bottom: calc(var(--h) + 6px);
-      width: 14px;
-      height: 26px;
-      border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
-      background: radial-gradient(ellipse at 50% 75%, #fff6c9 12%, #ffd35c 45%, #ff9a3c 80%);
-      box-shadow: 0 0 16px 7px rgba(255, 200, 90, .55);
-      transform-origin: 50% 100%;
-      animation:
-        flicker .9s ease-in-out var(--lit) infinite alternate,
-        ignite .45s var(--pop) var(--lit) backwards;
-      transition: opacity .35s, transform .35s;
-    }
-    .candle.out .flame { animation: none; opacity: 0; transform: scale(.2); }
-
-    .smoke {
-      position: absolute;
-      left: 8px;
-      bottom: calc(var(--h) + 12px);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .8);
-      opacity: 0;
-      pointer-events: none;
-    }
-    .candle.out .smoke { animation: smoke 1.2s ease-out; }
-
-    /* =========================================================
-       5. MUSIC BUTTON
-       ========================================================= */
-    .music-btn {
-      position: absolute;
-      top: calc(20px + env(safe-area-inset-top, 0px));
-      right: 20px;
-      z-index: 70;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, .4);
-      background: rgba(255, 255, 255, .15);
-      color: #fff;
-      font-size: 20px;
-      cursor: pointer;
-    }
-    .music-btn:hover { background: rgba(255, 255, 255, .3); }
-    .music-btn.muted { opacity: .5; text-decoration: line-through; }
-
-    /* =========================================================
-       6. LETTER POPUP
-       ========================================================= */
-    .letter-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(20, 12, 45, .6);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .4s;
-    }
-    .letter-modal.show { opacity: 1; pointer-events: auto; }
-
-    .letter {
-      position: relative;
-      width: min(88vw, 500px);
-      padding: 10px;
-      border-radius: 3px;
-      background: #e4daf2;
-      box-shadow: 0 25px 60px rgba(30, 20, 70, .5);
-      transform: translateY(40px) scale(.8) rotate(-3deg);
-      transition: transform .7s var(--pop);
-    }
-    .letter-modal.show .letter { transform: none; }
-
-    .letter-inner {
-      height: min(66vh, 520px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      padding: clamp(28px, 5vw, 50px);
-      border: 1px solid rgba(90, 60, 140, .22);
-      color: var(--letter-ink);
-      background:
-        linear-gradient(rgba(253, 250, 255, .95), rgba(248, 243, 255, .95)),
-        repeating-linear-gradient(0deg, transparent 0 31px, rgba(110, 80, 160, .07) 32px);
-    }
-    .letter-inner p  { font-size: clamp(15px, 2.2vw, 18px); line-height: 1.8; margin-bottom: 14px; }
-    .letter-page     { display: none; text-align: center; margin: auto 0; }
-    .letter-page.active { display: block; animation: pageIn .5s ease; }
-    .letter-page h2  { font-size: clamp(22px, 4vw, 30px); font-weight: normal; font-style: italic; margin-bottom: 14px; }
-    .letter-page .sign { font-style: italic; text-align: right; margin-bottom: 0; }
-
-    .letter-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px 2px;
-      color: var(--letter-ink);
-      font-size: 14px;
-      letter-spacing: 1px;
-    }
-    .letter-nav span { opacity: .6; }
-    .letter-nav button {
-      background: none;
-      border: 0;
-      color: var(--letter-ink);
-      font-family: inherit;
-      font-size: 15px;
-      cursor: pointer;
-      padding: 4px 6px;
-    }
-    .letter-nav button:disabled { opacity: .25; cursor: default; }
-
-    .letter-close {
-      position: absolute;
-      top: 18px;
-      right: 22px;
-      z-index: 2;
-      background: none;
-      border: 0;
-      font-size: 22px;
-      line-height: 1;
-      color: var(--letter-ink);
-      opacity: .6;
-      cursor: pointer;
-    }
-    .letter-close:hover { opacity: 1; }
-
-    /* =========================================================
-       7. POP-UP ENTRANCE  (stand -> tiers -> candles drop in -> flames light)
-       ========================================================= */
-    .stand-foot  { animation: tierPop .6s var(--pop) .00s backwards; }
-    .stand-stem  { animation: tierPop .6s var(--pop) .10s backwards; }
-    .stand-plate { animation: plainPop .6s var(--pop) .20s backwards; }
-    .tier--base  { animation: tierPop .7s var(--pop) .45s backwards; }
-    .tier--mid   { animation: tierPop .7s var(--pop) .80s backwards; }
-    .tier--top   { animation: tierPop .7s var(--pop) 1.15s backwards; }
-    .top-rim     { animation: tierPop .5s var(--pop) 1.35s backwards; }
-    .candle      { animation: candleDrop .55s var(--pop) calc(1.5s + var(--i) * .12s) backwards; }
-    .title       { animation: fadeUp .9s ease .2s backwards; }
-    .instruction { animation: fadeUp .9s ease 2.9s backwards; }
-
-    /* once the intro is over, relighting after a letter is instant */
-    .ready .flame {
-      animation:
-        flicker .9s ease-in-out infinite alternate,
-        ignite .45s var(--pop) backwards;
-    }
-    .candle.out .flame { animation: none; }
-
-    @keyframes tierPop {
-      0%   { opacity: 0; transform: translateX(-50%) translateY(70px) scale(.5); }
-      100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-    }
-    @keyframes plainPop {
-      0%   { opacity: 0; transform: translateY(50px) scale(.6); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes candleDrop {
-      0%   { opacity: 0; transform: translateY(-70px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes ignite {
-      0%   { opacity: 0; transform: scale(0); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    @keyframes fadeUp {
-      0%   { opacity: 0; transform: translateY(14px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    /* =========================================================
-       8. ANIMATIONS + RESPONSIVE
-       ========================================================= */
-    @keyframes flicker {
-      0%   { transform: scale(1, 1) rotate(-3deg); }
-      100% { transform: scale(.92, 1.08) rotate(3deg); }
-    }
-    @keyframes smoke {
-      0%   { opacity: .9; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0;  transform: translate(8px, -50px) scale(5); }
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(7px); }
-    }
-    @keyframes pageIn {
-      from { opacity: 0; transform: translateX(14px); }
-      to   { opacity: 1; transform: none; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .flame, .instruction span,
-      .stand-foot, .stand-stem, .stand-plate, .tier, .top-rim, .candle, .title, .instruction { animation: none !important; }
-      .letter { transition-duration: .2s; }
-    }
-    @media (max-width: 600px) {
-      .cake { transform: scale(.85); }
-      .title p:last-child { font-size: 22px; }
-      .instruction { font-size: 14px; margin-top: 16px; }
-    }
-    @media (max-height: 700px) {
-      .cake { transform: scale(.78); margin-top: 0; }
-    }
-  </style>
+/* ANIMATIONS */
+@keyframes tierPop{0%{opacity:0;transform:translateX(-50%) translateY(70px) scale(.5)}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+@keyframes plainPop{0%{opacity:0;transform:translateY(50px) scale(.6)}100%{opacity:1;transform:none}}
+@keyframes rise{0%{opacity:0;clip-path:inset(100% 0 0 0)}100%{opacity:1;clip-path:inset(0)}}
+@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+@keyframes breathe{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes candleDrop{0%{opacity:0;transform:translateY(-22px)}100%{opacity:1;transform:none}}
+@keyframes ignite{0%{opacity:0;transform:scale(0)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:none}}
+@keyframes flicker{0%{transform:scale(1,1) rotate(-3deg)}100%{transform:scale(.92,1.08) rotate(3deg)}}
+@keyframes smoke{0%{opacity:.9;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(8px,-50px) scale(5)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@keyframes pageIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:.95;transform:scale(1.1)}}
+@keyframes envFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .flame,.instruction span,.stand-foot,.stand-stem,.stand-plate,.tier,.top-rim,.candle,.title,.instruction,.cake::before,.env-hint,.env svg{animation:none!important}
+  .letter{transition-duration:.2s}
+}
+@media (max-width:600px){.cake{transform:scale(.85)}.title p:last-child{font-size:24px}.instruction{font-size:14px;margin-top:16px}}
+@media (max-height:700px){.cake{transform:scale(.78);margin-top:0}}
+</style>
 </head>
-
 <body>
-  <canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
 
-  <div class="scene">
+<div class="scene">
+  <div class="title"><p>Hello KY!!,</p><p>Happy Birthday!</p></div>
 
-    <div class="title">
-      <p>Hello KY!!,</p>
-      <p>Happy Birthday!</p>
+  <div class="cake">
+    <div class="stand-foot"></div><div class="stand-stem"></div><div class="stand-plate"></div>
+
+    <div class="tier tier--base">
+      <i class="bloom" style="left:58px;bottom:30px"></i>
+      <i class="bloom" style="left:133px;bottom:30px"></i>
+      <i class="bloom" style="left:208px;bottom:30px"></i>
     </div>
+    <div class="tier tier--top"></div>
+    <div class="top-rim"></div>
 
-    <!-- CAKE -->
-    <div class="cake">
-
-      <div class="stand-foot"></div>
-      <div class="stand-stem"></div>
-      <div class="stand-plate"></div>
-
-      <div class="tier tier--base">
-        <i class="pearls"></i>
-        <i class="bloom"        style="left: 48px;  bottom: 30px;"></i>
-        <i class="bloom bloom--lilac" style="left: 138px; bottom: 30px;"></i>
-        <i class="bloom"        style="left: 228px; bottom: 30px;"></i>
-      </div>
-
-      <div class="tier tier--mid">
-        <i class="pearls"></i>
-        <i class="bloom bloom--lilac" style="left: 44px;  bottom: 28px;"></i>
-        <i class="bloom"        style="left: 99px;  bottom: 28px;"></i>
-        <i class="bloom bloom--lilac" style="left: 154px; bottom: 28px;"></i>
-      </div>
-
-      <div class="tier tier--top">
-        <i class="pearls"></i>
-        <i class="bloom" style="left: 64px; bottom: 28px;"></i>
-      </div>
-
-      <div class="top-rim"></div>
-
-      <!-- 6 candles: each one opens its own page of the letter -->
-      <button class="candle" data-page="1" style="--x: 101px; --h: 52px; --i: 0;" aria-label="Candle 1">
-        <span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span>
-      </button>
-      <button class="candle" data-page="2" style="--x: 125px; --h: 62px; --i: 1;" aria-label="Candle 2">
-        <span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span>
-      </button>
-      <button class="candle" data-page="3" style="--x: 149px; --h: 56px; --i: 2;" aria-label="Candle 3">
-        <span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span>
-      </button>
-      <button class="candle" data-page="4" style="--x: 173px; --h: 62px; --i: 3;" aria-label="Candle 4">
-        <span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span>
-      </button>
-      <button class="candle" data-page="5" style="--x: 197px; --h: 52px; --i: 4;" aria-label="Candle 5">
-        <span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span>
-      </button>
-      <button class="candle" data-page="6" style="--x: 221px; --h: 58px; --i: 5;" aria-label="Candle 6">
-        <span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span>
-      </button>
-
-    </div>
-
-    <div class="instruction">Blow ur candles madaam!<span>&#8964;</span></div>
-
-    <!-- MUSIC: put your song next to this file and change the name below -->
-    <button class="music-btn muted" id="musicBtn" aria-label="Toggle music">&#9834;</button>
-    <input type="file" id="songPicker" accept="audio/*" hidden>
-    <audio id="bgm" src="mars.mp3" loop preload="auto"></audio>
-
+    <button class="candle" data-page="1" style="--x:101px;--h:52px;--i:0" aria-label="Candle 1"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
+    <button class="candle" data-page="2" style="--x:125px;--h:62px;--i:1" aria-label="Candle 2"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
+    <button class="candle" data-page="3" style="--x:149px;--h:56px;--i:2" aria-label="Candle 3"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
+    <button class="candle" data-page="4" style="--x:173px;--h:62px;--i:3" aria-label="Candle 4"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
+    <button class="candle" data-page="5" style="--x:197px;--h:52px;--i:4" aria-label="Candle 5"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
+    <button class="candle" data-page="6" style="--x:221px;--h:58px;--i:5" aria-label="Candle 6"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
   </div>
 
-  <!-- LETTER (one page per candle - edit the text below) -->
-  <div class="letter-modal" id="modal" role="dialog" aria-modal="true" aria-label="Letter">
-    <div class="letter">
-      <button class="letter-close" id="close" aria-label="Close letter">&times;</button>
+  <div class="instruction">Blow ur candles madaam!<span>&#8964;</span></div>
 
-      <div class="letter-inner">
+  <button class="music-btn muted" id="musicBtn" aria-label="Toggle music">&#9834;</button>
+  <input type="file" id="songPicker" accept="audio/*" hidden>
+  <audio id="bgm" src="mars.mp3" loop preload="auto"></audio>
+</div>
 
-        <div class="letter-page" data-page="1">
-          <h2>HAPPY BIRTHDAY, KY!</h2>
-          <p>Make a wish, then keep going.</p>
-          <p>(write your first message here)</p>
-        </div>
+<div class="letter-modal" id="modal" role="dialog" aria-modal="true" aria-label="Letter">
+  <button class="env" id="env" aria-label="Open the bouquet">
+    <svg id="bq" viewBox="0 0 320 400" aria-hidden="true"></svg>
+    <span class="env-hint">tap the bouquet to open</span>
+  </button>
 
-        <div class="letter-page" data-page="2">
-          <h2>MAMAMO</h2>
-          <p>(write your second message here)</p>
-        </div>
-
-        <div class="letter-page" data-page="3">
-          <h2>Message 3</h2>
-          <p>(write your third message here)</p>
-        </div>
-
-        <div class="letter-page" data-page="4">
-          <h2>Message 4</h2>
-          <p>(write your fourth message here)</p>
-        </div>
-
-        <div class="letter-page" data-page="5">
-          <h2>Message 5</h2>
-          <p>(write your fifth message here)</p>
-        </div>
-
-        <div class="letter-page" data-page="6">
-          <p>Lastly...</p>
-          <p>i hope you achieve everything you've been working so hard for.. i hope all those dreams you've been quietly carrying finally become your reality!</p>
-          <p class="sign">HAPPY BIRTHDAY, I WISH U ALL THE BEST MARCILOG!!!!!</p>
-        </div>
-
+  <div class="letter">
+    <button class="letter-close" id="close" aria-label="Close letter">&times;</button>
+    <div class="letter-inner">
+      <div class="letter-page" data-page="1">
+        <h2>HAPPY BIRTHDAY, KY!</h2>
+        <p>Hello, Happy Birhtday Ky!!</p>
+        <p>I WISH YOU ALL THE BEST THINGS IN LIFE MAKE SURE.</p>
       </div>
-
-      <div class="letter-nav">
-        <button id="prev" aria-label="Previous page">&larr; Back</button>
-        <span id="ind">1 / 6</span>
-        <button id="next" aria-label="Next page">Next &rarr;</button>
+      <div class="letter-page" data-page="2">
+        <h2>This Letter Made Only For You Ma'am🌸</h2>
+        <p>-------</p>
+      </div>
+      <div class="letter-page" data-page="3">
+        <h2>Message 3</h2>
+        <p>-------</p>
+      </div>
+      <div class="letter-page" data-page="4">
+        <h2>Message 4</h2>
+        <p>------</p>
+      </div>
+      <div class="letter-page" data-page="5">
+        <h2>Message 5</h2>
+        <p>---------</p>
+      </div>
+      <div class="letter-page" data-page="6">
+        <p>Lastly...</p>
+        <p>i hope you achieve everything you've been working so hard for.. i hope all those dreams you've been quietly carrying finally become your reality!</p>
+        <p class="sign">HAPPY BIRTHDAY, I WISH U ALL THE BEST MARCILOG!!!!!</p>
       </div>
     </div>
+    <div class="letter-nav">
+      <button id="prev" aria-label="Previous page">&larr; Back</button>
+      <span id="ind">1 / 6</span>
+      <button id="next" aria-label="Next page">Next &rarr;</button>
+    </div>
   </div>
+</div>
 
-  <script>
-    (function () {
-      "use strict";
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), rnd=(a,b)=>a+Math.random()*(b-a);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      const $ = (selector) => document.querySelector(selector);
-      const rnd = (min, max) => min + Math.random() * (max - min);
+/* Music */
+const bgm=$("#bgm"),musicBtn=$("#musicBtn"),picker=$("#songPicker");
+let needsPick=false,started=false;
+const playMusic=()=>bgm.play().then(()=>musicBtn.classList.remove("muted")).catch(()=>{});
+function startMusic(){if(started)return;started=true;bgm.volume=.1;playMusic()}
+musicBtn.addEventListener("click",()=>{
+  if(needsPick){picker.click();return}
+  if(bgm.paused)playMusic();else{bgm.pause();musicBtn.classList.add("muted")}
+});
+bgm.addEventListener("error",()=>{needsPick=true;musicBtn.title="Song not found - click to choose an audio file"});
+picker.addEventListener("change",()=>{
+  const f=picker.files[0];if(!f)return;
+  bgm.src=URL.createObjectURL(f);needsPick=false;started=true;playMusic();
+});
 
-      /* ---------- Music ---------- */
-      const bgm = $("#bgm");
-      const musicBtn = $("#musicBtn");
-      const picker = $("#songPicker");
-      let needsPick = false;
-      let started = false;
+/* Confetti + floating hearts (foreground canvas) */
+const fx=$("#fx"),fctx=fx.getContext("2d");
+let bits=[],fxOn=false;
+const COLORS=["#cdb8f0","#a889d6","#f2bcd0","#e0607f","#fff","#f5e2a8","#8e5fc2"];
+function fxResize(){fx.width=innerWidth;fx.height=innerHeight}
+function burst(n,x,y){
+  for(let i=0;i<n;i++){
+    const a=rnd(-Math.PI,0),v=rnd(5,13);
+    bits.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.22,s:rnd(5,10),r:rnd(0,6),vr:rnd(-.3,.3),c:COLORS[i%COLORS.length],heart:Math.random()<.25,life:rnd(110,190)});
+  }
+  if(!fxOn){fxOn=true;requestAnimationFrame(fxLoop)}
+}
+function heart(c,s){c.beginPath();c.moveTo(0,s*.3);c.bezierCurveTo(-s,-s*.5,-s*.3,-s,0,-s*.35);c.bezierCurveTo(s*.3,-s,s,-s*.5,0,s*.3);c.fill()}
+function fxLoop(){
+  fctx.clearRect(0,0,fx.width,fx.height);
+  bits=bits.filter(b=>b.life>0&&b.y<fx.height+30);
+  bits.forEach(b=>{
+    b.vy+=b.g;b.vx*=.99;b.x+=b.vx;b.y+=b.vy;b.r+=b.vr;b.life--;
+    fctx.save();fctx.globalAlpha=Math.min(1,b.life/40);fctx.translate(b.x,b.y);fctx.rotate(b.r);fctx.fillStyle=b.c;
+    if(b.heart)heart(fctx,b.s);else fctx.fillRect(-b.s/2,-b.s/4,b.s,b.s/2);
+    fctx.restore();
+  });
+  if(bits.length)requestAnimationFrame(fxLoop);else{fxOn=false;fctx.clearRect(0,0,fx.width,fx.height)}
+}
 
-      const playMusic = () =>
-        bgm.play()
-          .then(() => musicBtn.classList.remove("muted"))
-          .catch(() => {});
-
-      function startMusic() {
-        if (started) return;
-        started = true;
-        bgm.volume = 0.7;
-        playMusic();
-      }
-
-      musicBtn.addEventListener("click", () => {
-        if (needsPick) { picker.click(); return; }
-        if (bgm.paused) {
-          playMusic();
-        } else {
-          bgm.pause();
-          musicBtn.classList.add("muted");
-        }
-      });
-
-      // song file missing? let the person choose one from their device
-      bgm.addEventListener("error", () => {
-        needsPick = true;
-        musicBtn.title = "Song not found - click to choose an audio file";
-      });
-
-      picker.addEventListener("change", () => {
-        const file = picker.files[0];
-        if (!file) return;
-        bgm.src = URL.createObjectURL(file);
-        needsPick = false;
-        started = true;
-        playMusic();
-      });
-
-      /* ---------- Letter ---------- */
-      const modal = $("#modal");
-      const pages = document.querySelectorAll(".letter-page");
-      const prevBtn = $("#prev");
-      const nextBtn = $("#next");
-      const indicator = $("#ind");
-      const letterInner = $(".letter-inner");
-      let page = 1;
-
-      function showPage(n) {
-        page = Math.max(1, Math.min(pages.length, n));
-        pages.forEach((el) => el.classList.toggle("active", Number(el.dataset.page) === page));
-        prevBtn.disabled = page === 1;
-        nextBtn.disabled = page === pages.length;
-        indicator.textContent = page + " / " + pages.length;
-        letterInner.scrollTop = 0;
-      }
-
-      prevBtn.addEventListener("click", () => showPage(page - 1));
-      nextBtn.addEventListener("click", () => showPage(page + 1));
-
-      /* ---------- Candles ---------- */
-      const candles = document.querySelectorAll(".candle");
-
-      const relight = () => candles.forEach((c) => c.classList.remove("out"));
-
-      function closeLetter() {
-        modal.classList.remove("show");
-        setTimeout(relight, 500);
-      }
-
-      candles.forEach((candle) => {
-        candle.addEventListener("click", () => {
-          startMusic();
-          candle.classList.add("out");
-          setTimeout(() => {
-            showPage(Number(candle.dataset.page));
-            modal.classList.add("show");
-          }, 650);
-        });
-      });
-
-      $("#close").addEventListener("click", closeLetter);
-      modal.addEventListener("click", (e) => { if (e.target === modal) closeLetter(); });
-
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeLetter();
-        if (modal.classList.contains("show")) {
-          if (e.key === "ArrowRight") showPage(page + 1);
-          if (e.key === "ArrowLeft")  showPage(page - 1);
-        }
-      });
-
-      /* ---------- Sky: twinkling stars + rising golden glow ---------- */
-      const canvas = $("#sky");
-      const ctx = canvas.getContext("2d");
-      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      let W, H, stars = [], glows = [];
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        W = innerWidth;
-        H = innerHeight;
-        canvas.width = W * dpr;
-        canvas.height = H * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        stars = Array.from({ length: 90 }, () => ({
-          x: Math.random() * W, y: Math.random() * H * 0.65,
-          r: rnd(0.4, 1.4), speed: rnd(0.6, 1.6), phase: rnd(0, 6.28)
-        }));
-        glows = Array.from({ length: 28 }, () => ({
-          x: Math.random() * W, y: Math.random() * H,
-          r: rnd(2, 6), rise: rnd(0.12, 0.3), phase: rnd(0, 6.28)
-        }));
-      }
-
-      function draw(t) {
-        ctx.clearRect(0, 0, W, H);
-
-        ctx.fillStyle = "#fff";
-        ctx.shadowBlur = 0;
-        stars.forEach((s) => {
-          ctx.globalAlpha = 0.3 + 0.7 * (Math.sin(t / 700 * s.speed + s.phase) + 1) / 2;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, 6.283);
-          ctx.fill();
-        });
-
-        ctx.fillStyle = "rgba(255, 222, 160, .8)";
-        ctx.shadowColor = "rgba(255, 210, 140, .9)";
-        ctx.shadowBlur = 14;
-        glows.forEach((g) => {
-          if (!reduceMotion) g.y -= g.rise;
-          if (g.y < -10) { g.y = H + 10; g.x = Math.random() * W; }
-          ctx.globalAlpha = 0.25 + 0.25 * Math.sin(t / 900 + g.phase);
-          ctx.beginPath();
-          ctx.arc(g.x + Math.sin(t / 1800 + g.phase) * 14, g.y, g.r, 0, 6.283);
-          ctx.fill();
-        });
-
-        ctx.globalAlpha = 1;
-        ctx.shadowBlur = 0;
-        requestAnimationFrame(draw);
-      }
-
-      window.addEventListener("resize", resize);
-      resize();
-      requestAnimationFrame(draw);
-      showPage(1);
-
-      /* intro finished -> relighting candles no longer waits for the intro delays */
-      setTimeout(() => document.body.classList.add("ready"), 3600);
+/* Typewriter */
+let typeToken=0;
+function typePage(el){
+  const token=++typeToken;
+  const lines=[...el.querySelectorAll("h2,p")];
+  lines.forEach(l=>{if(l.dataset.full==null)l.dataset.full=l.textContent});
+  if(reduce){lines.forEach(l=>l.textContent=l.dataset.full);return}
+  lines.forEach(l=>{l.textContent="";l.classList.remove("typing")});
+  (function next(i){
+    if(token!==typeToken||i>=lines.length)return;
+    const l=lines[i],t=l.dataset.full;let k=0;
+    l.classList.add("typing");
+    (function tick(){
+      if(token!==typeToken)return;
+      l.textContent=t.slice(0,++k);
+      if(k<t.length)setTimeout(tick,/[.,!?]/.test(t[k-1])?160:28);
+      else{l.classList.remove("typing");setTimeout(()=>next(i+1),220)}
     })();
-  </script>
+  })(0);
+}
+
+/* Letter */
+const modal=$("#modal"),env=$("#env"),pages=document.querySelectorAll(".letter-page");
+const prevBtn=$("#prev"),nextBtn=$("#next"),ind=$("#ind"),inner=$(".letter-inner");
+let page=1;
+function showPage(n,type){
+  page=Math.max(1,Math.min(pages.length,n));
+  pages.forEach(el=>el.classList.toggle("active",Number(el.dataset.page)===page));
+  prevBtn.disabled=page===1;nextBtn.disabled=page===pages.length;
+  ind.textContent=page+" / "+pages.length;inner.scrollTop=0;
+  if(type!==false)typePage(document.querySelector('.letter-page[data-page="'+page+'"]'));
+  if(page===pages.length&&type!==false)setTimeout(()=>{burst(60,innerWidth/2,innerHeight*.6)},500);
+}
+prevBtn.addEventListener("click",()=>showPage(page-1));
+nextBtn.addEventListener("click",()=>showPage(page+1));
+
+function openEnvelope(){
+  if(env.classList.contains("open"))return;
+  env.classList.add("open");
+  burst(70,innerWidth/2,innerHeight*.55);
+  setTimeout(()=>{modal.classList.add("opened");showPage(page)},850);
+}
+env.addEventListener("click",openEnvelope);
+
+/* Candles */
+const candles=document.querySelectorAll(".candle");
+const relight=()=>candles.forEach(c=>c.classList.remove("out"));
+function closeLetter(){
+  typeToken++;
+  modal.classList.remove("show","opened");
+  setTimeout(()=>{env.classList.remove("open");relight()},500);
+}
+candles.forEach(c=>c.addEventListener("click",()=>{
+  startMusic();
+  c.classList.add("out");
+  const r=c.getBoundingClientRect();
+  burst(18,r.left+r.width/2,r.top);
+  setTimeout(()=>{page=Number(c.dataset.page);showPage(page,false);modal.classList.add("show")},650);
+}));
+$("#close").addEventListener("click",closeLetter);
+modal.addEventListener("click",e=>{if(e.target===modal)closeLetter()});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeLetter();
+  if(modal.classList.contains("show")){
+    if(e.key==="Enter"&&!modal.classList.contains("opened"))openEnvelope();
+    if(modal.classList.contains("opened")){
+      if(e.key==="ArrowRight")showPage(page+1);
+      if(e.key==="ArrowLeft")showPage(page-1);
+    }
+  }
+});
+
+
+/* Bouquet: lilac + carnation + dahlia, drawn as SVG */
+(function(){
+const NS="http://www.w3.org/2000/svg";let out="";
+const n=(i,k)=>{const v=Math.sin(i*12.9898+k*78.233)*43758.5453;return v-Math.floor(v)};
+const rot=(a,x=0,y=0)=>`transform="rotate(${a} ${x} ${y})"`;
+/* dahlia: layered pointed petals */
+function dahlia(x,y,r,c1,c2,c3){
+  let g=`<g transform="translate(${x} ${y})">`;
+  [[1,16,c1],[.74,13,c2],[.5,10,c3],[.28,8,c2]].forEach(([k,cnt,c],ri)=>{
+    const h=r*k,w=h*.34;
+    for(let i=0;i<cnt;i++)g+=`<path d="M0 0C${-w} ${-h*.4} ${-w*.7} ${-h} 0 ${-h}C${w*.7} ${-h} ${w} ${-h*.4} 0 0Z" fill="${c}" stroke="rgba(70,20,70,.25)" stroke-width=".6" ${rot(i*360/cnt+ri*11)}/>`;
+  });
+  return g+`<circle r="${r*.1}" fill="#f5d36b"/></g>`;
+}
+/* carnation: ruffled scalloped rings */
+function carnation(x,y,r,c1,c2){
+  let g=`<g transform="translate(${x} ${y})"><circle r="${r}" fill="${c2}"/>`;
+  [[.78,14,.3,c1],[.52,10,.27,c2],[.28,7,.24,c1]].forEach(([k,cnt,s,c],ri)=>{
+    for(let i=0;i<cnt;i++){const a=(i/cnt+ri*.07)*6.283;
+      g+=`<circle cx="${Math.cos(a)*r*k}" cy="${Math.sin(a)*r*k}" r="${r*s}" fill="${c}" stroke="rgba(120,30,70,.28)" stroke-width=".7"/>`}
+  });
+  return g+`<circle r="${r*.12}" fill="${c2}" opacity=".7"/></g>`;
+}
+/* lilac: conical cluster of four-petal florets */
+function lilac(x,y,w,h,c1,c2,seed){
+  let g="",rows=9;
+  for(let j=0;j<rows;j++){
+    const t=j/(rows-1),cnt=2+Math.round(t*5),ry=y+t*h;
+    for(let i=0;i<cnt;i++){
+      const fx=x+((i+.5)/cnt-.5)*w*(.25+t*.75)+(n(i+j*9,seed)-.5)*5,fy=ry+(n(j,i+seed)-.5)*5,c=n(i,j+seed)>.5?c1:c2,s=5.2-t*.6;
+      g+=`<g transform="translate(${fx.toFixed(1)} ${fy.toFixed(1)}) rotate(${(n(i,j)*90).toFixed(0)})" fill="${c}">`+
+        [0,90,180,270].map(a=>`<ellipse cy="${-s*.8}" rx="${s*.55}" ry="${s}" ${rot(a)}/>`).join("")+`<circle r="1.3" fill="#fff6c8"/></g>`;
+    }
+  }
+  return g;
+}
+const leaf=(x,y,a,l,c="#6f9a6a")=>`<path d="M${x} ${y}q${l*.25} ${-l*.3} 0 ${-l}q${-l*.25} ${l*.7} 0 ${l}z" fill="${c}" stroke="rgba(30,70,40,.35)" stroke-width=".6" ${rot(a,x,y)}/>`;
+
+/* greenery behind */
+for(const a of[-62,-40,-20,20,40,62])out+=leaf(160,290,a,150);
+/* stems */
+[[160,90],[110,110],[212,110],[160,170],[100,190],[220,195],[150,120],[130,235]].forEach(([x,y])=>{
+  out+=`<path d="M${x} ${y}Q${(x+160)/2} 230 160 305" stroke="#5f8a5b" stroke-width="3" fill="none" stroke-linecap="round"/>`});
+/* lilac spikes (top) */
+out+=lilac(112,38,74,118,"#b79be6","#8e63c9",1)+lilac(208,50,70,110,"#d7c4f5","#a984db",2)+lilac(160,12,66,120,"#9f7ad8","#c9b0f0",3);
+/* flowers */
+out+=carnation(98,178,28,"#f6b9cf","#e57aa0")+carnation(224,184,27,"#fff1f5","#f0a6c0");
+out+=dahlia(160,168,42,"#8f3b86","#c25a9e","#f0a6cf");
+out+=dahlia(112,222,30,"#f2a48e","#e0607f","#ffd2c4")+dahlia(212,228,30,"#b86fd0","#8e45b4","#e3baf2");
+out+=carnation(160,236,24,"#fbd7e4","#ee94b4");
+/* wrapping paper cone + ribbon */
+out+=`<path d="M62 262L160 392L258 262Q160 300 62 262Z" fill="#f4eafb" stroke="#cdb8f0" stroke-width="1.5"/>
+<path d="M62 262Q160 300 258 262L236 292Q160 322 84 292Z" fill="#e3d4f6"/>
+<path d="M160 392L128 296M160 392L192 296" stroke="#cdb8f0" stroke-width="1.2" fill="none"/>
+<path d="M160 312L126 296Q112 316 130 330Q150 326 160 312ZM160 312L194 296Q208 316 190 330Q170 326 160 312Z" fill="url(#rb)" stroke="#a87a32" stroke-width=".8"/>
+<path d="M160 312L146 352L160 344L174 352Z" fill="#d6aa55"/><circle cx="160" cy="312" r="8" fill="#f5e2a8" stroke="#a87a32" stroke-width=".8"/>`;
+document.getElementById("bq").innerHTML=`<defs><linearGradient id="rb" x1="0" x2="1"><stop offset="0" stop-color="#a87a32"/><stop offset=".5" stop-color="#f5e2a8"/><stop offset="1" stop-color="#a87a32"/></linearGradient></defs>`+out;
+})();
+
+/* Sky */
+const canvas=$("#sky"),ctx=canvas.getContext("2d");
+let W,H,stars=[],glows=[];
+function resize(){
+  const d=Math.min(devicePixelRatio||1,2);
+  W=innerWidth;H=innerHeight;canvas.width=W*d;canvas.height=H*d;ctx.setTransform(d,0,0,d,0,0);
+  fxResize();
+  stars=Array.from({length:90},()=>({x:Math.random()*W,y:Math.random()*H*.55,r:rnd(.4,1.4),speed:rnd(.6,1.6),phase:rnd(0,5.28)}));
+  glows=Array.from({length:28},()=>({x:Math.random()*W,y:Math.random()*H,r:rnd(2,6),rise:rnd(.12,.3),phase:rnd(0,6.28)}));
+}
+function draw(t){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#fff";ctx.shadowBlur=0;
+  stars.forEach(s=>{ctx.globalAlpha=.3+.7*(Math.sin(t/600*s.speed+s.phase)+1)/2;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.283);ctx.fill()});
+  ctx.fillStyle="rgba(255,222,160,.8)";ctx.shadowColor="rgba(255,210,140,.9)";ctx.shadowBlur=14;
+  glows.forEach(g=>{
+    if(!reduce)g.y-=g.rise;
+    if(g.y<-10){g.y=H+10;g.x=Math.random()*W}
+    ctx.globalAlpha=.25+.25*Math.sin(t/900+g.phase);
+    ctx.beginPath();ctx.arc(g.x+Math.sin(t/1800+g.phase)*14,g.y,g.r,0,6.283);ctx.fill();
+  });
+  ctx.globalAlpha=1;ctx.shadowBlur=0;requestAnimationFrame(draw);
+}
+addEventListener("resize",resize);resize();requestAnimationFrame(draw);showPage(1,false);
+setTimeout(()=>document.body.classList.add("ready"),3600);
+})();
+</script>
 </body>
 </html>
