@@ -135,7 +135,7 @@ body.locked .scene{display:none}
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <div id="intro" role="button" tabindex="0" aria-label="Shoot the cake with the arrow">
-  <div class="intro-title"><p>A little something for you</p><p>Take your shot</p></div>
+  <div class="intro-title"><p>A little something for you bebe 💐</p><p>Take your shot cuh!!</p></div>
 
   <div id="target">
     <svg viewBox="0 0 120 120" aria-hidden="true">
@@ -169,7 +169,7 @@ body.locked .scene{display:none}
     <path d="M9 2L21 8L9 14L13 8Z" fill="#e0607f"/>
   </svg>
 
-  <div class="hint">tap to release the arrow</div>
+  <div class="hint">Hold mo arrow para may malaman ka hehe</div>
 </div>
 
 <div class="scene">
@@ -203,7 +203,7 @@ body.locked .scene{display:none}
 <div class="letter-modal" id="modal" role="dialog" aria-modal="true" aria-label="Letter">
   <button class="env" id="env" aria-label="Open the bouquet">
     <svg id="bq" viewBox="0 0 320 400" aria-hidden="true"></svg>
-    <span class="env-hint">tap the bouquet to open</span>
+    <span class="env-hint">------</span>
   </button>
 
   <div class="letter">
@@ -216,7 +216,7 @@ body.locked .scene{display:none}
       </div>
       <div class="letter-page" data-page="2">
         <h2>This Letter Made Only For You Ma'am🌸</h2>
-        <p>i have gift for u and js told me if u already read this </p>
+        <p>---------------</p>
       </div>
       <div class="letter-page" data-page="3">
         <h2>Message 3</h2>
@@ -231,7 +231,7 @@ body.locked .scene{display:none}
         <p>---------</p>
       </div>
       <div class="letter-page" data-page="6">
-        <h2>HAPPY BIRTHDAY AGAIN🍀</h2>
+        <h2>HAPPY BIRTHDAY AGAIN 🎂</h2>
         <p>Lastly...</p>
         <p>i hope you achieve everything you've been working so hard for.. i hope all those dreams you've been quietly carrying finally become your reality!</p>
         <p class="sign">HAPPY BIRTHDAY</p>
@@ -506,7 +506,7 @@ function burst(x,y,n){
     const d=el(heart
       ?`left:${x}px;top:${y}px;font-size:${sz+8}px;color:${col};line-height:1`
       :`left:${x}px;top:${y}px;width:${sz}px;height:${sz*(Math.random()<.5?1:.45)}px;background:${col};border-radius:${Math.random()<.4?"50%":"1px"}`);
-    if(heart)d.textContent="♥";
+    if(heart)d.textContent="🎂";
     const ang=rnd(0,Math.PI*2), dist=rnd(90,270);
     d.animate([{transform:"translate(-50%,-50%) rotate(0) scale(1)",opacity:1},
                {transform:`translate(calc(-50% + ${Math.cos(ang)*dist}px),calc(-50% + ${Math.sin(ang)*dist+rnd(50,140)}px)) rotate(${rnd(-540,540)}deg) scale(.4)`,opacity:0}],
@@ -527,7 +527,7 @@ function toast(msg){
 /* HAPPY BIRTHDAY banner, letters pop in one by one */
 function banner(){
   const w=el(`left:0;right:0;top:50%;text-align:center;font-family:Georgia,'Times New Roman',serif;line-height:1.05`);
-  const lines=[["HAPPY","#fdf1f3","clamp(40px,13vw,76px)"],["BIRTHDAY","#f5e2a8","clamp(40px,13vw,76px)"],["KY ♥","#f2bcd0","clamp(28px,8vw,44px)"]];
+  const lines=[["HAPPY","#fdf1f3","clamp(40px,13vw,76px)"],["BIRTHDAY","#f5e2a8","clamp(40px,13vw,76px)"],["KY 🎂💐","#f2bcd0","clamp(28px,8vw,44px)"]];
   let n=0;
   lines.forEach(([txt,col,fs],li)=>{
     const row=document.createElement("div");
@@ -598,7 +598,7 @@ intro.addEventListener("pointermove",e=>{
   const g=geo(PULL), tx=g.T.x-g.B.x, ty=g.T.y-g.B.y;
   const along=tx*Math.cos(aim)+ty*Math.sin(aim), perp=Math.abs(tx*Math.sin(aim)-ty*Math.cos(aim));
   setAligned(along>0&&perp<HIT_R);
-  hint.textContent=power<.5?"pull back more…":aligned?"perfect, release!":"keep aiming…";
+  hint.textContent=power<.5?"HILAAAAAAAAA":aligned?"YAN SAKTO NA YAN":"PAKA AIM MO PAA";
 });
 function endDrag(){
   dragging=false;
@@ -674,7 +674,7 @@ function miss(B,a,p,weak){
     if(n++%2===0)spark(x-Math.cos(ang)*L*s,y-Math.sin(ang)*L*s);
   },()=>{
     arrow.animate([{opacity:1},{opacity:0}],{duration:200,fill:"forwards"});
-    toast(weak?"Pull back more! 🏹":"So close! Try again 🏹");
+    toast(weak?"SIGE, HILA PAAAAAAA!!!":"PATI DITO DI MARUNONG MAG ARROW, LALA!!");
     setTimeout(()=>{
       arrow.getAnimations().forEach(x=>x.cancel());
       tgSvg.getAnimations().forEach(x=>x.cancel());
