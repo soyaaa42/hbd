@@ -135,7 +135,7 @@ body.locked .scene{display:none}
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <div id="intro" role="button" tabindex="0" aria-label="Shoot the cake with the arrow">
-  <div class="intro-title"><p>A little something for you bebe🌸</p><p>Take your shot at cake cuh!!</p></div>
+  <div class="intro-title"><p>A little something for you</p><p>Take your shot</p></div>
 
   <div id="target">
     <svg viewBox="0 0 120 120" aria-hidden="true">
@@ -169,7 +169,7 @@ body.locked .scene{display:none}
     <path d="M9 2L21 8L9 14L13 8Z" fill="#e0607f"/>
   </svg>
 
-  <div class="hint">Hold and Tirahin mo na cake mo!!!</div>
+  <div class="hint">tap to release the arrow</div>
 </div>
 
 <div class="scene">
@@ -314,21 +314,72 @@ function makeStars(){stars=Array.from({length:Math.round(innerWidth*innerHeight/
 size();makeStars();
 addEventListener("resize",()=>{size();makeStars()});
 
-/* Bouquet (SVG) */
-(function(){
-  const bq=$("#bq"),NS="http://www.w3.org/2000/svg";
-  const add=(tag,attrs,parent=bq)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
-  const stems=[[160,190,-60],[160,200,-30],[160,205,0],[160,200,30],[160,190,60]];
-  const tops=[[80,120],[115,80],[160,60],[205,80],[240,120]];
-  const cols=["#f2bcd0","#cdb8f0","#fffaf3","#cdb8f0","#f2bcd0"];
-  tops.forEach(([x,y])=>add("path",{d:`M160 330 Q${(160+x)/2} ${(330+y)/2+20} ${x} ${y}`,stroke:"#6aa57a","stroke-width":4,fill:"none","stroke-linecap":"round"}));
-  [[110,230,-30],[210,230,30],[130,200,-50],[190,200,50]].forEach(([x,y,r])=>add("ellipse",{cx:x,cy:y,rx:10,ry:26,fill:"#7fb88d",transform:`rotate(${r} ${x} ${y})`}));
-  tops.forEach(([x,y],i)=>{for(let k=0;k<6;k++)add("ellipse",{cx:x,cy:y-17,rx:9,ry:15,fill:cols[i],stroke:"rgba(120,80,150,.25)","stroke-width":.8,transform:`rotate(${k*60} ${x} ${y})`});
-    add("circle",{cx:x,cy:y,r:7,fill:"#f5d36b"})});
-  add("path",{d:"M115 320 L160 250 L205 320 L190 372 L130 372Z",fill:"#f3e8f7",stroke:"#cdb8f0","stroke-width":2});
-  add("path",{d:"M128 335 Q160 350 192 335",stroke:"#e0607f","stroke-width":6,fill:"none","stroke-linecap":"round"});
-  add("circle",{cx:160,cy:340,r:7,fill:"#e0607f"});
-})();
+/* Bouquets: carnations mixed with lilac, one unique bouquet per candle */
+const BQ_NS="http://www.w3.org/2000/svg";
+const CARN=[["#fbd0dc","#f2a1bb","#d9708f"],["#fff6f0","#f3dfe0","#d8bfc6"],["#f58a9a","#e0506b","#b92e4d"],
+            ["#ffd2b8","#ffa98a","#e07a5f"],["#f7a8d6","#e060ae","#b0337f"],["#e3d3f7","#c4a6ec","#9a76cf"]];
+const CARN_SETS=[[0,1,0],[2,0,1],[3,1,3],[4,0,1],[5,0,1],[0,3,4]];
+const LILAC=["#b79be6","#a07bd8","#cdb8f0","#8a63c7","#d9c8f5"];
+function drawBouquet(seed){
+  const bq=$("#bq");bq.innerHTML="";
+  const add=(tag,attrs,parent=bq)=>{const e=document.createElementNS(BQ_NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
+  let st=(seed+1)*7919+13;
+  const R=()=>{st|=0;st=st+0x6D2B79F5|0;let t=Math.imul(st^st>>>15,1|st);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+  const rr=(a,b)=>a+R()*(b-a), BX=160, BY=330;
+  const pol=(deg,len)=>[BX+Math.sin(deg*Math.PI/180)*len, BY-Math.cos(deg*Math.PI/180)*len];
+
+  // leaves
+  for(let k=0;k<9;k++){
+    const deg=rr(-62,62), len=rr(120,185), [tx,ty]=pol(deg,len), mx=(BX+tx)/2, my=(BY+ty)/2, nx=Math.cos(deg*Math.PI/180)*rr(14,22), ny=Math.sin(deg*Math.PI/180)*rr(14,22);
+    add("path",{d:`M${BX} ${BY}Q${mx-nx} ${my-ny} ${tx} ${ty}Q${mx+nx} ${my+ny} ${BX} ${BY}Z`,fill:k%2?"#7fb88d":"#6aa57a",opacity:.95});
+  }
+
+  // lilac sprigs (back row): cone of tiny florets
+  [-26,0,26].forEach((deg,si)=>{
+    const g=add("g",{transform:`rotate(${deg+rr(-5,5)} ${BX} ${BY})`});
+    const L=rr(235,265), top=BY-L, h=rr(105,120);
+    add("path",{d:`M${BX} ${BY}L${BX} ${top+h*.75}`,stroke:"#6aa57a","stroke-width":3.5,"stroke-linecap":"round"},g);
+    const rows=9;
+    for(let r=0;r<rows;r++){
+      const t=r/(rows-1), yy=top+t*h, w=4+t*34, cnt=1+Math.round(t*5)+(r?1:0);
+      for(let j=0;j<cnt;j++){
+        const xx=BX+(cnt===1?0:(j/(cnt-1)-.5)*2*w)+rr(-3,3), y2=yy+rr(-4,4), sz=rr(5,7.5);
+        add("circle",{cx:xx,cy:y2,r:sz,fill:LILAC[Math.floor(R()*LILAC.length)]},g);
+        add("circle",{cx:xx-sz*.25,cy:y2-sz*.25,r:sz*.42,fill:"#efe6fb",opacity:.8},g);
+      }
+    }
+  });
+
+  // carnations (front row)
+  const set=CARN_SETS[seed%CARN_SETS.length], slots=[-36,-18,0,18,36], lens=[168,184,196,184,168];
+  slots.forEach((deg,i)=>{
+    const [cx,cy]=pol(deg+rr(-4,4),lens[i]+rr(-8,8)), r=rr(27,33), pal=CARN[set[(i+seed)%set.length]];
+    add("path",{d:`M${BX} ${BY}L${cx} ${cy}`,stroke:"#5f9a6e","stroke-width":3.5,"stroke-linecap":"round"});
+    const g=add("g",{transform:`translate(${cx} ${cy}) rotate(${rr(0,360)})`});
+    const ring=(rad,n,amp,fill)=>{
+      let d="";const step=Math.PI*2/n;
+      for(let k=0;k<n;k++){
+        const a0=k*step,a1=a0+step,am=a0+step/2;
+        if(k===0)d+=`M${Math.cos(a0)*rad} ${Math.sin(a0)*rad}`;
+        d+=`Q${Math.cos(am)*(rad+amp)} ${Math.sin(am)*(rad+amp)} ${Math.cos(a1)*rad} ${Math.sin(a1)*rad}`;
+      }
+      add("path",{d:d+"Z",fill,stroke:pal[2],"stroke-width":.8,"stroke-opacity":.7},g);
+    };
+    ring(r,14,r*.22,pal[1]);ring(r*.8,12,r*.2,pal[0]);ring(r*.58,10,r*.18,pal[1]);ring(r*.36,8,r*.14,pal[0]);
+    for(let k=0;k<12;k++){const a=rr(0,6.283),r0=r*.12,r1=r*rr(.55,.9);
+      add("path",{d:`M${Math.cos(a)*r0} ${Math.sin(a)*r0}L${Math.cos(a)*r1} ${Math.sin(a)*r1}`,stroke:pal[2],"stroke-width":.9,opacity:.4},g)}
+    add("circle",{cx:0,cy:0,r:r*.09,fill:pal[2],opacity:.55},g);
+  });
+
+  // wrapping paper + ribbon
+  add("path",{d:"M92 285L160 318L228 285L196 382L124 382Z",fill:"#f3e8f7",stroke:"#cdb8f0","stroke-width":2,"stroke-linejoin":"round"});
+  add("path",{d:"M160 318L228 285L196 382L160 382Z",fill:"#e4daf2",opacity:.9});
+  add("path",{d:"M138 348Q160 360 182 348",stroke:"#e0607f","stroke-width":7,fill:"none","stroke-linecap":"round"});
+  add("ellipse",{cx:146,cy:352,rx:15,ry:8,fill:"#e0607f",transform:"rotate(-24 146 352)"});
+  add("ellipse",{cx:174,cy:352,rx:15,ry:8,fill:"#e0607f",transform:"rotate(24 174 352)"});
+  add("circle",{cx:160,cy:353,r:6,fill:"#c24566"});
+}
+drawBouquet(0);
 
 /* Candles -> bouquet -> letter */
 const modal=$("#modal"),env=$("#env"),candles=[...document.querySelectorAll(".candle")];
@@ -356,18 +407,19 @@ function show(i){
   $(".letter-inner").scrollTop=0;
 }
 function allOut(){return candles.every(c=>c.classList.contains("out"))}
-candles.forEach(c=>c.addEventListener("click",()=>{
+let active=0;
+candles.forEach((c,idx)=>c.addEventListener("click",()=>{
   if(c.classList.contains("out")||celebrating)return;
   c.classList.add("out");
-  if(allOut()){
-    celebrating=true;
-    confetti(120);
-    setTimeout(()=>{modal.classList.add("show")},900);
-  }
+  celebrating=true;
+  active=Math.max(0,(parseInt(c.dataset.page,10)||idx+1)-1);
+  drawBouquet(idx);
+  confetti(40);
+  setTimeout(()=>{modal.classList.add("show")},800);
 }));
 env.addEventListener("click",()=>{
   env.classList.add("open");
-  show(0);
+  show(active);
   setTimeout(()=>{modal.classList.add("opened");confetti(60,innerWidth/2,innerHeight/2)},450);
 });
 prev.addEventListener("click",()=>show(cur-1));
@@ -381,9 +433,11 @@ function closeLetter(){
   modal.classList.remove("opened");
   setTimeout(()=>{
     modal.classList.remove("show");env.classList.remove("open");
-    candles.forEach(c=>c.classList.remove("out"));
-    document.querySelector(".scene").classList.add("ready");
     celebrating=false;
+    if(allOut()){
+      confetti(140);
+      setTimeout(()=>{candles.forEach(c=>c.classList.remove("out"));document.querySelector(".scene").classList.add("ready")},2500);
+    }
   },500);
 }
 $("#close").addEventListener("click",closeLetter);
@@ -395,7 +449,7 @@ const intro=$("#intro"),tg=$("#target"),tgSvg=tg.querySelector("svg"),
       rig=$("#rig"),arrow=$("#arrow"),str=$("#str"),hint=intro.querySelector(".hint");
 const L=55, PULL=34, PULLMAX=40, S1=.68, HIT_R=60;
 const PAL=["#f5e2a8","#f2bcd0","#cdb8f0","#e0607f","#ffffff","#a889d6"];
-const HINT_IDLE="HILAIN MO ARROW THEN RELEASE PERO TRY MO RIN WAG I-AIM SA MISMONG CAKE HAHAHHAHAHA!!";
+const HINT_IDLE="drag back to aim, release to shoot (or just tap)";
 let state="aim", dragging=false, sx=0, sy=0, moved=0, aim=0, pull=4, power=0, aligned=false;
 hint.textContent=HINT_IDLE;
 intro.style.touchAction="none";
@@ -544,7 +598,7 @@ intro.addEventListener("pointermove",e=>{
   const g=geo(PULL), tx=g.T.x-g.B.x, ty=g.T.y-g.B.y;
   const along=tx*Math.cos(aim)+ty*Math.sin(aim), perp=Math.abs(tx*Math.sin(aim)-ty*Math.cos(aim));
   setAligned(along>0&&perp<HIT_R);
-  hint.textContent=power<.5?"Hilain mo pa hahaha":aligned?"oh baka maduling ka pa?!":"keep aiming…";
+  hint.textContent=power<.5?"pull back more…":aligned?"perfect, release!":"keep aiming…";
 });
 function endDrag(){
   dragging=false;
@@ -620,7 +674,7 @@ function miss(B,a,p,weak){
     if(n++%2===0)spark(x-Math.cos(ang)*L*s,y-Math.sin(ang)*L*s);
   },()=>{
     arrow.animate([{opacity:1},{opacity:0}],{duration:200,fill:"forwards"});
-    toast(weak?"Pull back more! 🏹":"TRY AGAIN NIGGER");
+    toast(weak?"Pull back more! 🏹":"So close! Try again 🏹");
     setTimeout(()=>{
       arrow.getAnimations().forEach(x=>x.cancel());
       tgSvg.getAnimations().forEach(x=>x.cancel());
@@ -640,8 +694,8 @@ function hit(g){
     place(tip.x-Math.cos(a)*L*S1, tip.y-Math.sin(a)*L*S1, a,S1,1);
   });
   tgSvg.animate([{transform:"scale(1.08)"},{transform:"scale(1.22) rotate(-5deg)"},
-  {transform:"scale(.95) rotate(4deg)"},{transform:"scale(1.08) rotate(-2deg)"},
-  {transform:"scale(1.05)"}],{duration:650,easing:"ease-out",fill:"forwards"});
+                 {transform:"scale(.95) rotate(4deg)"},{transform:"scale(1.08) rotate(-2deg)"},
+                 {transform:"scale(1.05)"}],{duration:650,easing:"ease-out",fill:"forwards"});
   shock(g.T.x,g.T.y,0); shock(g.T.x,g.T.y,140);
   const f=el(`inset:0;background:radial-gradient(circle at ${g.T.x}px ${g.T.y}px,rgba(255,240,200,.85),transparent 55%)`);
   f.animate([{opacity:0},{opacity:1,offset:.2},{opacity:0}],{duration:800}).onfinish=()=>f.remove();
