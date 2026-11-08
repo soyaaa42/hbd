@@ -16,7 +16,9 @@ body{overflow:hidden;font-family:Georgia,"Times New Roman",serif;color:var(--ink
   background:radial-gradient(ellipse at 50% 105%,rgba(255,170,140,.55),transparent 55%),
   linear-gradient(to bottom,#1f1538 0%,#3b2557 38%,#7a4a7e 68%,#d58a8f 100%)}
 #sky,#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
-#sky{z-index:1}#fx{z-index:200}
+#sky{z-index:0}#fx{z-index:200}
+#garden{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;transform-origin:50% 50%;animation:gardenIn 1.4s ease backwards,gardenSway 14s ease-in-out 1.4s infinite}
+.shade{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 48%,rgba(28,12,48,.62) 0%,rgba(28,12,48,.4) 50%,rgba(28,12,48,.08) 100%)}
 .scene{position:relative;z-index:5;width:100vw;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:env(safe-area-inset-top,0px)}
 body.locked .scene{display:none}
 
@@ -24,25 +26,27 @@ body.locked .scene{display:none}
 .title{position:absolute;top:calc(34px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;pointer-events:none;text-shadow:0 2px 12px rgba(20,10,40,.5);animation:fadeUp .9s ease .2s backwards}
 .title p:first-child{font-size:14px;letter-spacing:.5px;opacity:.85;margin-bottom:6px}
 .title p:last-child,.intro-title p:last-child{font-size:30px;font-style:italic;background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 8px rgba(20,10,40,.5))}
-.instruction{margin-top:30px;text-align:center;font-size:17px;letter-spacing:1.5px;pointer-events:none;text-shadow:0 2px 10px rgba(20,10,40,.5);animation:fadeUp .9s ease 2.9s backwards}
+.instruction{margin-top:30px;text-align:center;font-size:17px;letter-spacing:1.5px;pointer-events:none;text-shadow:0 2px 10px rgba(20,10,40,.5);animation:fadeUp .9s ease 3.4s backwards}
 .instruction span{display:block;font-size:24px;margin-top:4px;animation:bounce 1.6s ease-in-out infinite}
 
-/* CAKE */
-.cake{position:relative;width:340px;height:360px;margin-top:30px;filter:drop-shadow(0 14px 20px rgba(10,5,30,.4));animation:cakePop 1.1s var(--pop) backwards}
+/* CAKE (3 layers) */
+.cake{position:relative;width:340px;height:430px;margin-top:30px;filter:drop-shadow(0 14px 20px rgba(10,5,30,.4));animation:cakePop 1.1s var(--pop) backwards}
 .cake::before{content:"";position:absolute;left:50%;bottom:-26px;width:460px;height:56px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(255,200,160,.4),transparent);z-index:-1;animation:breathe 5s ease-in-out 2s infinite}
 .stand-plate{position:absolute;left:-14px;right:-14px;bottom:38px;height:14px;border-radius:50%;background:linear-gradient(#fff,#e6dcef);box-shadow:0 3px 6px rgba(40,20,70,.2);animation:fadeIn .6s ease .1s backwards}
 .stand-stem{position:absolute;left:50%;bottom:8px;width:14px;height:32px;transform:translateX(-50%);background:linear-gradient(90deg,#e6dcef,#fff,#e6dcef);animation:fadeIn .6s ease 0s backwards}
 .stand-foot{position:absolute;left:50%;bottom:0;width:96px;height:9px;transform:translateX(-50%);border-radius:50%;background:linear-gradient(#fff,#ddd2ea);animation:fadeIn .6s ease 0s backwards}
-.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:8px 8px 3px 3px;overflow:hidden;background:linear-gradient(90deg,#f1e8da 0%,#fffaf3 30%,#fffdf8 60%,#efe5d4 100%)}
-.tier--base{bottom:48px;width:280px;height:94px;animation:rise .9s var(--out) .4s backwards}
-.tier--top{bottom:142px;width:188px;height:108px;animation:rise .9s var(--out) .9s backwards}
+.tier{position:absolute;left:50%;transform:translateX(-50%);height:82px;border-radius:8px 8px 3px 3px;overflow:hidden;background:linear-gradient(90deg,#f1e8da 0%,#fffaf3 30%,#fffdf8 60%,#efe5d4 100%)}
+.tier--base{bottom:48px;width:280px;animation:rise .9s var(--out) .4s backwards}
+.tier--mid{bottom:130px;width:234px;animation:rise .9s var(--out) .9s backwards}
+.tier--top{bottom:212px;width:188px;animation:rise .9s var(--out) 1.4s backwards}
 .tier::before{content:"";position:absolute;inset:0 0 auto 0;height:26px;background:linear-gradient(#e9dcf6,#f3ecfa)}
-.tier::after{content:"";position:absolute;left:0;right:0;bottom:16px;height:2px;background:var(--gold)}
-.bloom{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#f5d36b 2.5px,#fff 3px,#fff 4px,#cdb8f0 5px,#b79be6 7px)}
-.top-rim{position:absolute;left:50%;bottom:243px;width:188px;height:14px;transform:translateX(-50%);border-radius:50%;background:#fffdf8;box-shadow:inset 0 -2px 4px rgba(150,110,80,.15);z-index:1;animation:fadeIn .5s ease 1.4s backwards}
+.tier::after{content:"";position:absolute;left:0;right:0;bottom:12px;height:2px;background:var(--gold)}
+.tier-text{position:absolute;left:0;right:0;top:26px;bottom:14px;display:flex;align-items:center;justify-content:center;z-index:2;font-style:italic;font-weight:bold;font-size:22px;letter-spacing:4px;color:#7a4fb5;text-shadow:0 1px 0 rgba(255,255,255,.9)}
+.bloom{position:absolute;top:6px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#f5d36b 2.5px,#fff 3px,#fff 4px,#cdb8f0 5px,#b79be6 7px)}
+.top-rim{position:absolute;left:50%;bottom:287px;width:188px;height:14px;transform:translateX(-50%);border-radius:50%;background:#fffdf8;box-shadow:inset 0 -2px 4px rgba(150,110,80,.15);z-index:1;animation:fadeIn .5s ease 1.9s backwards}
 
 /* CANDLES */
-.candle{position:absolute;left:var(--x);--lit:calc(2.1s + var(--i)*.12s);bottom:250px;width:22px;height:110px;border:0;background:none;cursor:pointer;z-index:4;-webkit-tap-highlight-color:transparent;animation:candleDrop .7s var(--out) calc(1.7s + var(--i)*.1s) backwards}
+.candle{position:absolute;left:var(--x);--lit:calc(2.6s + var(--i)*.12s);bottom:294px;width:22px;height:110px;border:0;background:none;cursor:pointer;z-index:4;-webkit-tap-highlight-color:transparent;animation:candleDrop .7s var(--out) calc(2.2s + var(--i)*.1s) backwards}
 .candle:focus-visible{outline:3px solid #fff;outline-offset:4px;border-radius:8px}
 .wax{position:absolute;left:8px;bottom:0;width:6px;height:var(--h);border-radius:3px 3px 1px 1px;background:linear-gradient(90deg,#f1d795,#fffaf0 45%,#e9c97a);box-shadow:inset -2px 0 3px rgba(120,80,20,.25);transition:transform .3s var(--pop)}
 .candle:hover .wax{transform:translateY(-3px)}
@@ -67,7 +71,18 @@ body.locked .scene{display:none}
 .letter-modal.show .env{transform:none;opacity:1}
 .letter-modal.show .env:not(.open) svg{animation:sway 4.5s ease-in-out .9s infinite}
 .env.open{pointer-events:none}
-.env.open svg{animation:none;transform:scale(1.35) translateY(-30px);opacity:0}
+.env.open svg{animation:none;transform:scale(1.35) translateY(-30px);opacity:0;transition:transform .8s ease .75s,opacity .5s ease .8s}
+#flap{transform-origin:160px 170px;transition:transform .25s ease-in,opacity .1s linear .22s}
+#flapBack{opacity:0;transition:opacity .2s linear .22s}
+#card{transition:transform .8s var(--out) .3s}
+#seal{transform-box:fill-box;transform-origin:center;transition:opacity .2s,transform .3s}
+.env:not(.open) #seal{animation:beat 1.6s ease-in-out infinite}
+.env.open #flap{transform:scaleY(0);opacity:0}
+.env.open #flapBack{opacity:1}
+.env.open #card{transform:translateY(-100px)}
+.env.open #seal{opacity:0;transform:scale(1.8)}
+.bl{animation:balloon 3.4s ease-in-out infinite}
+.sp{transform-box:fill-box;transform-origin:center;animation:twinkle2 1.8s ease-in-out infinite}
 .env.open .env-hint{opacity:0}
 .env-hint{position:absolute;bottom:-38px;left:0;right:0;text-align:center;font-style:italic;letter-spacing:1px;font-size:15px;color:var(--ink);text-shadow:0 2px 8px rgba(20,10,40,.6);transition:opacity .3s;animation:beat 1.8s ease-in-out infinite}
 
@@ -121,17 +136,24 @@ body.locked .scene{display:none}
 @keyframes blink{50%{opacity:0}}
 @keyframes bob{0%,100%{transform:translateY(-5px)}50%{transform:translateY(5px)}}
 @keyframes ring{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.5);opacity:0}}
+@keyframes balloon{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes twinkle2{0%,100%{opacity:.25;transform:scale(.5)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes gardenIn{0%{opacity:0}100%{opacity:1}}
+@keyframes gardenSway{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.035) rotate(.6deg)}}
 @keyframes shock{0%{transform:scale(1);opacity:1}100%{transform:scale(16);opacity:0}}
 @media (prefers-reduced-motion:reduce){
-  .flame,.instruction span,.stand-foot,.stand-stem,.stand-plate,.tier,.top-rim,.candle,.title,.instruction,.cake,.cake::before,.env-hint,.env svg,#target,#target::before,#target::after,.hint{animation:none!important}
+  .flame,.instruction span,.stand-foot,.stand-stem,.stand-plate,.tier,.top-rim,.candle,.title,.instruction,.cake,.cake::before,.env-hint,.env svg,#target,#target::before,#target::after,.hint,#garden,.bl,.sp,.env:not(.open) #seal{animation:none!important}
   .letter{transition-duration:.2s}
 }
-@media (max-width:600px){.cake{transform:scale(.85)}.title p:last-child,.intro-title p:last-child{font-size:24px}.instruction{font-size:14px;margin-top:16px}}
-@media (max-height:700px){.cake{transform:scale(.78);margin-top:0}}
+@media (max-width:600px){.cake{transform:scale(.8)}.title p:last-child,.intro-title p:last-child{font-size:24px}.instruction{font-size:14px;margin-top:16px}}
+@media (max-height:800px){.cake{transform:scale(.72);margin-top:0}}
+@media (max-height:680px){.cake{transform:scale(.6);margin-top:-20px}}
 </style>
 </head>
 <body class="locked">
 <canvas id="sky" aria-hidden="true"></canvas>
+<canvas id="garden" aria-hidden="true"></canvas>
+<div class="shade"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <div id="intro" role="button" tabindex="0" aria-label="Shoot the cake with the arrow">
@@ -173,16 +195,18 @@ body.locked .scene{display:none}
 </div>
 
 <div class="scene">
-  <div class="title"><p>Hello KY!!,</p><p>Happy Birthday!</p></div>
+  <div class="title"><p>Hello KY!!,</p><p>Happy Birthday🎂!</p></div>
 
   <div class="cake">
     <div class="stand-foot"></div><div class="stand-stem"></div><div class="stand-plate"></div>
     <div class="tier tier--base">
-      <i class="bloom" style="left:58px;bottom:30px"></i>
-      <i class="bloom" style="left:133px;bottom:30px"></i>
-      <i class="bloom" style="left:208px;bottom:30px"></i>
+      <i class="bloom" style="left:58px"></i>
+      <i class="bloom" style="left:133px"></i>
+      <i class="bloom" style="left:208px"></i>
+      <div class="tier-text">KY</div>
     </div>
-    <div class="tier tier--top"></div>
+    <div class="tier tier--mid"><div class="tier-text">BIRTHDAY</div></div>
+    <div class="tier tier--top"><div class="tier-text">HAPPY</div></div>
     <div class="top-rim"></div>
 
     <button class="candle" data-page="1" style="--x:101px;--h:52px;--i:0" aria-label="Candle 1"><span class="wick"></span><span class="wax"></span><span class="flame"></span><span class="smoke"></span></button>
@@ -201,9 +225,9 @@ body.locked .scene{display:none}
 </div>
 
 <div class="letter-modal" id="modal" role="dialog" aria-modal="true" aria-label="Letter">
-  <button class="env" id="env" aria-label="Open the bouquet">
+  <button class="env" id="env" aria-label="Open the birthday envelope">
     <svg id="bq" viewBox="0 0 320 400" aria-hidden="true"></svg>
-    <span class="env-hint">------</span>
+    <span class="env-hint">Tap to open 💌</span>
   </button>
 
   <div class="letter">
@@ -212,30 +236,29 @@ body.locked .scene{display:none}
       <div class="letter-page" data-page="1">
         <h2>HAPPY BIRTHDAY, KY!</h2>
         <p>Hello, Happy Birthday Ky!!</p>
-        <p>I WISH YOU ALL THE BEST THINGS IN LIFE.</p>
+        <p>i hope today you feel appreciated this new chapter brings u clarity, growth and genuine happiness.</p>
       </div>
       <div class="letter-page" data-page="2">
         <h2>This Letter Made Only For You Ma'am🌸</h2>
-        <p>---------------</p>
+        <p>Wishing you all the best things in life po!!</p>
       </div>
       <div class="letter-page" data-page="3">
-        <h2>Message 3</h2>
-        <p>-------</p>
+        <h2>Reminder for the Birthday Girl!!!🎂</h2>
+        <p>not everyone saw the struggles of yours but here you now. you're still striving for more and i hope it will become your reality!</p>
       </div>
       <div class="letter-page" data-page="4">
-        <h2>Message 4</h2>
-        <p>------</p>
+        <h2>Take a leap of faith</h2>
+        <p>Happy Birthday to a genuinely good person who continues to inspire the other people, i mean look at you hehe. also never lose the genuine heart that makes you SPECIAL Ma,am!🎂</p>
       </div>
       <div class="letter-page" data-page="5">
-        <h2>Message 5</h2>
-        <p>---------</p>
+        <h2>Happy Birthday Jo!</h2>
+        <p>Pasensya ka na eto munang Website ni Tita Lola regalo ko sa'yo ah!, jk!! Happy Happy Happy Birthday!!!!!!!</p>
       </div>
       <div class="letter-page" data-page="6">
         <h2>HAPPY BIRTHDAY AGAIN 🎂</h2>
         <p>Lastly...</p>
-        <p>i hope you achieve everything you've been working so hard for.. i hope all those dreams you've been quietly carrying finally become your reality!</p>
-        <p class="sign">HAPPY BIRTHDAY</p>
-        <img src="cake.jpg" alt="">
+        <p>Happy Birthday Again!, i hope you know how special you are to me. I wish you nothing but happiness, good health and success in everything bebe (wag lang sakit) Also may this new chapter of yours will make you more happy and successed in everything WILL ALWAYS BE ROOTING FOR YOU💐🎂</p>
+        <p class="sign">HAPPY BIRTHDAY bebe!</p>
       </div>
     </div>
     <div class="letter-nav">
@@ -312,74 +335,117 @@ function makeStars(){stars=Array.from({length:Math.round(innerWidth*innerHeight/
   if(!reduce)requestAnimationFrame(twinkle);
 })(0);
 size();makeStars();
-addEventListener("resize",()=>{size();makeStars()});
-
-/* Bouquets: carnations mixed with lilac, one unique bouquet per candle */
-const BQ_NS="http://www.w3.org/2000/svg";
-const CARN=[["#fbd0dc","#f2a1bb","#d9708f"],["#fff6f0","#f3dfe0","#d8bfc6"],["#f58a9a","#e0506b","#b92e4d"],
-            ["#ffd2b8","#ffa98a","#e07a5f"],["#f7a8d6","#e060ae","#b0337f"],["#e3d3f7","#c4a6ec","#9a76cf"]];
-const CARN_SETS=[[0,1,0],[2,0,1],[3,1,3],[4,0,1],[5,0,1],[0,3,4]];
-const LILAC=["#b79be6","#a07bd8","#cdb8f0","#8a63c7","#d9c8f5"];
-function drawBouquet(seed){
-  const bq=$("#bq");bq.innerHTML="";
-  const add=(tag,attrs,parent=bq)=>{const e=document.createElementNS(BQ_NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e};
-  let st=(seed+1)*7919+13;
-  const R=()=>{st|=0;st=st+0x6D2B79F5|0;let t=Math.imul(st^st>>>15,1|st);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
-  const rr=(a,b)=>a+R()*(b-a), BX=160, BY=330;
-  const pol=(deg,len)=>[BX+Math.sin(deg*Math.PI/180)*len, BY-Math.cos(deg*Math.PI/180)*len];
-
-  // leaves
-  for(let k=0;k<9;k++){
-    const deg=rr(-62,62), len=rr(120,185), [tx,ty]=pol(deg,len), mx=(BX+tx)/2, my=(BY+ty)/2, nx=Math.cos(deg*Math.PI/180)*rr(14,22), ny=Math.sin(deg*Math.PI/180)*rr(14,22);
-    add("path",{d:`M${BX} ${BY}Q${mx-nx} ${my-ny} ${tx} ${ty}Q${mx+nx} ${my+ny} ${BX} ${BY}Z`,fill:k%2?"#7fb88d":"#6aa57a",opacity:.95});
-  }
-
-  // lilac sprigs (back row): cone of tiny florets
-  [-26,0,26].forEach((deg,si)=>{
-    const g=add("g",{transform:`rotate(${deg+rr(-5,5)} ${BX} ${BY})`});
-    const L=rr(235,265), top=BY-L, h=rr(105,120);
-    add("path",{d:`M${BX} ${BY}L${BX} ${top+h*.75}`,stroke:"#6aa57a","stroke-width":3.5,"stroke-linecap":"round"},g);
-    const rows=9;
-    for(let r=0;r<rows;r++){
-      const t=r/(rows-1), yy=top+t*h, w=4+t*34, cnt=1+Math.round(t*5)+(r?1:0);
-      for(let j=0;j<cnt;j++){
-        const xx=BX+(cnt===1?0:(j/(cnt-1)-.5)*2*w)+rr(-3,3), y2=yy+rr(-4,4), sz=rr(5,7.5);
-        add("circle",{cx:xx,cy:y2,r:sz,fill:LILAC[Math.floor(R()*LILAC.length)]},g);
-        add("circle",{cx:xx-sz*.25,cy:y2-sz*.25,r:sz*.42,fill:"#efe6fb",opacity:.8},g);
-      }
+/* Carnation garden background */
+const gardenCv=$("#garden"),gctx=gardenCv.getContext("2d");
+const G_PAL=[["#fbd0dc","#f2a1bb","#d9708f"],["#fff6f0","#f3dfe0","#d8bfc6"],["#f58a9a","#e0506b","#b92e4d"],
+             ["#ffd2b8","#ffa98a","#e07a5f"],["#f7a8d6","#e060ae","#b0337f"],["#e3d3f7","#c4a6ec","#9a76cf"]];
+function mkRand(seed){let a=seed;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function carnationSprite(pal,seed){
+  const R=64,r=mkRand(seed*131+7),c=document.createElement("canvas");
+  c.width=c.height=R*2+8;
+  const x=c.getContext("2d");x.translate(R+4,R+4);
+  const ring=(rad,n,amp,fill)=>{
+    x.beginPath();const step=Math.PI*2/n;
+    for(let k=0;k<n;k++){
+      const a0=k*step,a1=a0+step,am=a0+step/2;
+      if(k===0)x.moveTo(Math.cos(a0)*rad,Math.sin(a0)*rad);
+      x.quadraticCurveTo(Math.cos(am)*(rad+amp),Math.sin(am)*(rad+amp),Math.cos(a1)*rad,Math.sin(a1)*rad);
     }
-  });
-
-  // carnations (front row)
-  const set=CARN_SETS[seed%CARN_SETS.length], slots=[-36,-18,0,18,36], lens=[168,184,196,184,168];
-  slots.forEach((deg,i)=>{
-    const [cx,cy]=pol(deg+rr(-4,4),lens[i]+rr(-8,8)), r=rr(27,33), pal=CARN[set[(i+seed)%set.length]];
-    add("path",{d:`M${BX} ${BY}L${cx} ${cy}`,stroke:"#5f9a6e","stroke-width":3.5,"stroke-linecap":"round"});
-    const g=add("g",{transform:`translate(${cx} ${cy}) rotate(${rr(0,360)})`});
-    const ring=(rad,n,amp,fill)=>{
-      let d="";const step=Math.PI*2/n;
-      for(let k=0;k<n;k++){
-        const a0=k*step,a1=a0+step,am=a0+step/2;
-        if(k===0)d+=`M${Math.cos(a0)*rad} ${Math.sin(a0)*rad}`;
-        d+=`Q${Math.cos(am)*(rad+amp)} ${Math.sin(am)*(rad+amp)} ${Math.cos(a1)*rad} ${Math.sin(a1)*rad}`;
-      }
-      add("path",{d:d+"Z",fill,stroke:pal[2],"stroke-width":.8,"stroke-opacity":.7},g);
-    };
-    ring(r,14,r*.22,pal[1]);ring(r*.8,12,r*.2,pal[0]);ring(r*.58,10,r*.18,pal[1]);ring(r*.36,8,r*.14,pal[0]);
-    for(let k=0;k<12;k++){const a=rr(0,6.283),r0=r*.12,r1=r*rr(.55,.9);
-      add("path",{d:`M${Math.cos(a)*r0} ${Math.sin(a)*r0}L${Math.cos(a)*r1} ${Math.sin(a)*r1}`,stroke:pal[2],"stroke-width":.9,opacity:.4},g)}
-    add("circle",{cx:0,cy:0,r:r*.09,fill:pal[2],opacity:.55},g);
-  });
-
-  // wrapping paper + ribbon
-  add("path",{d:"M92 285L160 318L228 285L196 382L124 382Z",fill:"#f3e8f7",stroke:"#cdb8f0","stroke-width":2,"stroke-linejoin":"round"});
-  add("path",{d:"M160 318L228 285L196 382L160 382Z",fill:"#e4daf2",opacity:.9});
-  add("path",{d:"M138 348Q160 360 182 348",stroke:"#e0607f","stroke-width":7,fill:"none","stroke-linecap":"round"});
-  add("ellipse",{cx:146,cy:352,rx:15,ry:8,fill:"#e0607f",transform:"rotate(-24 146 352)"});
-  add("ellipse",{cx:174,cy:352,rx:15,ry:8,fill:"#e0607f",transform:"rotate(24 174 352)"});
-  add("circle",{cx:160,cy:353,r:6,fill:"#c24566"});
+    x.closePath();x.fillStyle=fill;x.fill();
+    x.globalAlpha=.7;x.strokeStyle=pal[2];x.lineWidth=1;x.stroke();x.globalAlpha=1;
+  };
+  const b=R*.76;
+  ring(b,16,b*.22,pal[1]);ring(b*.8,14,b*.2,pal[0]);ring(b*.58,12,b*.18,pal[1]);ring(b*.36,9,b*.14,pal[0]);
+  x.strokeStyle=pal[2];x.lineWidth=1;x.globalAlpha=.4;
+  for(let k=0;k<16;k++){const a=r()*6.283,r0=b*.12,r1=b*(.55+r()*.35);
+    x.beginPath();x.moveTo(Math.cos(a)*r0,Math.sin(a)*r0);x.lineTo(Math.cos(a)*r1,Math.sin(a)*r1);x.stroke()}
+  x.globalAlpha=.55;x.fillStyle=pal[2];x.beginPath();x.arc(0,0,b*.09,0,6.283);x.fill();
+  return c;
 }
-drawBouquet(0);
+let sprites=null;
+function paintGarden(){
+  const d=Math.min(devicePixelRatio||1,2),w=innerWidth,h=innerHeight;
+  gardenCv.width=w*d;gardenCv.height=h*d;
+  gctx.setTransform(d,0,0,d,0,0);
+  if(!sprites)sprites=G_PAL.flatMap((pal,i)=>[carnationSprite(pal,i*2),carnationSprite(pal,i*2+1)]);
+  const r=mkRand(2024);
+  gctx.fillStyle="#2b1a40";gctx.fillRect(0,0,w,h);
+  // leaves
+  const leaves=Math.round(w*h/5200);
+  for(let i=0;i<leaves;i++){
+    const lx=r()*w,ly=r()*h,len=40+r()*50;
+    gctx.save();gctx.translate(lx,ly);gctx.rotate(r()*6.283);
+    gctx.fillStyle=i%2?"#4d8a63":"#3f7654";
+    gctx.beginPath();gctx.ellipse(len/2,0,len/2,len*.17,0,0,6.283);gctx.fill();
+    gctx.restore();
+  }
+  // flowers, back (top) to front (bottom)
+  const n=Math.round(w*h/2600),list=[];
+  for(let i=0;i<n;i++)list.push({x:r()*(w+80)-40,y:r()*(h+80)-40,s:.55+r()*.75,rot:r()*6.283,k:Math.floor(r()*sprites.length)});
+  list.sort((a,b)=>a.y-b.y);
+  for(const f of list){
+    const size=105*f.s;
+    gctx.save();gctx.translate(f.x,f.y);gctx.rotate(f.rot);
+    gctx.shadowColor="rgba(20,8,35,.45)";gctx.shadowBlur=10;gctx.shadowOffsetY=3;
+    gctx.drawImage(sprites[f.k],-size/2,-size/2,size,size);
+    gctx.restore();
+  }
+}
+paintGarden();
+addEventListener("resize",()=>{size();makeStars();paintGarden()});
+
+/* Birthday envelope: a different colour + balloons for each candle */
+const BQ_NS="http://www.w3.org/2000/svg";
+const ENV_PAL=[["#f7b3c8","#fbc9d8","#f08fb0","#e0607f"],["#c9b3f0","#dccbf7","#b196e6","#8a63c7"],
+               ["#ffc9a8","#ffdcc4","#ffad85","#e07a5f"],["#a8e0c8","#c4efdc","#84d1b0","#3f9d7a"],
+               ["#a8d4f5","#c4e3fa","#86bdee","#4f8fcf"],["#f6dc8c","#fbe8aa","#efc85f","#c9962f"]];
+const BAL=["#e0607f","#f5d36b","#8a63c7","#4fb3a5","#ff9d6c","#6aa6e6"];
+function drawEnvelope(seed){
+  const bq=$("#bq"), [body,pocket,flap,acc]=ENV_PAL[seed%ENV_PAL.length];
+  let flags="";
+  for(let i=0;i<9;i++){
+    const t=i/8,u=1-t,x=u*u*14+2*u*t*160+t*t*306,y=u*u*18+2*u*t*58+t*t*18;
+    flags+=`<path d="M${x-11} ${y}L${x+11} ${y}L${x} ${y+24}Z" fill="${BAL[(i+seed)%BAL.length]}"/>`;
+  }
+  const bal=(cx,cy,col,sx,d)=>`<g class="bl" style="animation-delay:${d}s">
+    <path d="M${cx} ${cy+37}Q${cx+8} ${cy+70} ${sx} 168" stroke="#fdf1f3" stroke-opacity=".75" stroke-width="1.5" fill="none"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="25" ry="31" fill="${col}"/>
+    <ellipse cx="${cx-9}" cy="${cy-12}" rx="5" ry="10" fill="#fff" opacity=".45" transform="rotate(20 ${cx-9} ${cy-12})"/>
+    <path d="M${cx-4} ${cy+36}L${cx+4} ${cy+36}L${cx} ${cy+43}Z" fill="${col}"/></g>`;
+  const star=(x,y,d)=>`<g transform="translate(${x} ${y})"><path class="sp" style="animation-delay:${d}s" d="M0 -8L2.2 -2.2L8 0L2.2 2.2L0 8L-2.2 2.2L-8 0L-2.2 -2.2Z" fill="#f5e2a8"/></g>`;
+  const dot=(x,y,c,d)=>`<circle class="sp" style="animation-delay:${d}s" cx="${x}" cy="${y}" r="4" fill="${c}"/>`;
+  bq.innerHTML=`
+  <ellipse cx="160" cy="352" rx="124" ry="9" fill="#140a28" opacity=".28"/>
+  <path id="flapBack" d="M30 170L290 170L160 80Z" fill="${acc}"/>
+  <defs><clipPath id="ec"><rect x="30" y="170" width="260" height="170" rx="10"/></clipPath></defs>
+  <rect x="30" y="170" width="260" height="170" rx="10" fill="${body}"/>
+  <g id="card">
+    <rect x="48" y="184" width="224" height="150" rx="6" fill="#fffaf3" stroke="${acc}" stroke-width="2"/>
+    <rect x="56" y="192" width="208" height="134" rx="3" fill="none" stroke="${acc}" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>
+    <text x="160" y="228" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="bold" font-style="italic" fill="${acc}">HAPPY</text>
+    <text x="160" y="258" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="bold" font-style="italic" fill="${acc}">BIRTHDAY</text>
+    <text x="160" y="292" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-style="italic" fill="#3a2a55">KY 🎂</text>
+  </g>
+  <g clip-path="url(#ec)">
+    <path d="M30 170L160 250L30 340Z" fill="${pocket}" stroke="${acc}" stroke-opacity=".35" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M290 170L160 250L290 340Z" fill="${pocket}" stroke="${acc}" stroke-opacity=".35" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M30 340L160 250L290 340Z" fill="${body}" stroke="${acc}" stroke-opacity=".35" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+  <text x="160" y="318" text-anchor="middle" textLength="170" lengthAdjust="spacingAndGlyphs" font-family="Georgia,serif" font-size="15" font-weight="bold" font-style="italic" fill="${acc}">HAPPY BIRTHDAY KY</text>
+  <text x="64" y="326" font-size="16" text-anchor="middle">🎉</text>
+  <text x="256" y="326" font-size="16" text-anchor="middle">🎈</text>
+  <g id="flap">
+    <path d="M30 170L290 170L160 250Z" fill="${flap}" stroke="${acc}" stroke-opacity=".5" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M46 177L160 238L274 177" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+  </g>
+  <g id="seal"><circle cx="160" cy="250" r="19" fill="${acc}" stroke="#fff" stroke-opacity=".7" stroke-width="2"/>
+    <text x="160" y="257" text-anchor="middle" font-size="19">🎂</text></g>
+  ${bal(58,122,BAL[seed%6],92,0)}${bal(160,104,BAL[(seed+2)%6],160,.6)}${bal(262,118,BAL[(seed+4)%6],228,1.2)}
+  <path d="M14 18Q160 58 306 18" fill="none" stroke="#fdf1f3" stroke-width="2"/>${flags}
+  ${star(22,206,0)}${star(300,214,.5)}${star(18,300,1)}${star(304,296,.3)}${star(160,388,.8)}
+  ${dot(60,376,"#f2bcd0",.2)}${dot(112,384,"#f5e2a8",.7)}${dot(214,382,"#cdb8f0",.4)}${dot(268,372,"#e0607f",1)}`;
+}
+drawEnvelope(0);
 
 /* Candles -> bouquet -> letter */
 const modal=$("#modal"),env=$("#env"),candles=[...document.querySelectorAll(".candle")];
@@ -413,14 +479,14 @@ candles.forEach((c,idx)=>c.addEventListener("click",()=>{
   c.classList.add("out");
   celebrating=true;
   active=Math.max(0,(parseInt(c.dataset.page,10)||idx+1)-1);
-  drawBouquet(idx);
+  drawEnvelope(idx);
   confetti(40);
   setTimeout(()=>{modal.classList.add("show")},800);
 }));
 env.addEventListener("click",()=>{
   env.classList.add("open");
   show(active);
-  setTimeout(()=>{modal.classList.add("opened");confetti(60,innerWidth/2,innerHeight/2)},450);
+  setTimeout(()=>{modal.classList.add("opened");confetti(60,innerWidth/2,innerHeight/2)},900);
 });
 prev.addEventListener("click",()=>show(cur-1));
 next.addEventListener("click",()=>show(cur+1));
